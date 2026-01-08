@@ -1,0 +1,505 @@
+:root{
+  --primary-color: hsl(300, 100%, 50%);
+}
+.hero-section {
+  /* max-height: 100px; */
+  /* background: linear-gradient(to bottom, #f85032, #e73827); */
+  /* background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%); */
+  background: hsl(from var(--primary-color) h s calc(l - 20));
+  background: linear-gradient(to top right, hsl(from var(--primary-color) h s calc(l - 20)), hsl(from var(--primary-color) h s calc(l + 10)));
+  padding: 50px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: aliceblue;
+}
+
+.hero-title {
+  text-align: center;
+  font-weight: 700;
+}
+
+.search-box input {
+  height: 50px;
+}
+
+.search-box button {
+  height: 50px;
+}
+
+.Search-box {
+  width: 150px;
+  display: flex;
+  margin-top: 3%;
+  z-index: 2;
+}
+
+.landing-image-background {
+  background-image: url("../assets/Images/LandingPageImage.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.rotating-box {
+  background-color: #5b2eff;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.hero-static-text {
+  display: inline;
+  row-gap: 20%;
+}
+
+.hero-section .view-all-btn {
+  background-color: #ffffff;
+  color: #e73827;
+  border: 2px solid #e73827;
+  transition: 0.2s ease-in-out;
+}
+
+.hero-section .view-all-btn:hover {
+  background-color: #e73827;
+  color: #ffffff;
+}
+
+.Searchbox{
+  background-color: #2c74bb;
+}
+
+
+/* About Us, Testimonials, Contact Us - Shared Container Styling */
+.section-container {
+  background: linear-gradient(to right, #f9f9f9, #ffffff);
+  padding: 60px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-top: 60px;
+}
+
+.section-container h3::after {
+  content: "";
+  width: 60px;
+  height: 4px;
+  background: #ffc107;
+  display: block;
+  margin: 10px auto 0 auto;
+  border-radius: 2px;
+}
+
+/* Paragraph Styling */
+.section-container p {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 800px;
+  margin: 10px auto;
+  line-height: 1.8;
+}
+
+/* Testimonial Quotes */
+.section-container .testimonial-quote {
+  font-style: italic;
+  color: #333;
+  font-size: 1rem;
+  margin: 12px auto;
+  padding: 10px 15px;
+  border-left: 4px solid #ffc107;
+  background: #fff9e6;
+  max-width: 700px;
+  border-radius: 6px;
+}
+
+.IndustrialCategories_Colored {
+  justify-content: center;
+  align-items: center;
+}
+
+/* .........Swiper................... */
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #cdcdcd;
+  transition: all 0.3s ease;
+  display: none;
+}
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  opacity: 0.7;
+  display: none;
+
+}
+
+/* ........for industrial category....... */
+
+/* Override Swiper default navigation buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000; /* Change to black or your desired color */
+  font-weight: bold;
+  /* background-color: rgba(255, 255, 255, 0.9); */
+  border-radius: 50%;
+  width: 40px;
+  display: none;
+
+  height: 40px;
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); */
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 18px; /* Adjust arrow size */
+  display: none;
+
+}
+
+/* Optional: On hover */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  /* background-color: #eee; */
+  transform: scale(1.05);
+}
+
+
+/* Adjust Swiper pagination position */
+.section-container .swiper-pagination {
+  position: relative !important;
+  margin-top: 16px;  
+  bottom: 0 !important;
+  text-align: center;
+}
+
+
+
+/* .......................... */
+
+.section-container {
+  padding: 0 1rem;
+}
+
+.business-card {
+  background-color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.business-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: #000;
+}
+
+.swiper-pagination-bullet {
+  background-color: #999;
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #f0ad4e;
+}
+
+/* download from phonebook */
+
+
+
+/* ========== BASE STYLES (Desktop) ========== */
+
+
+
+.phonebook-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background-color: white;
+  font-family: monospace;
+  overflow: hidden;
+}
+
+.promo-box {
+  background-color: #2c74bb;
+  color: rgb(255, 255, 255);
+  border-radius: 15px;
+  padding: 40px;
+  padding-right: 80px;
+  width: 150vh;
+  height: 40vh;
+  z-index: 1;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  background-image: url("../assets/Images/Asset1.png") ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* opacity: 0.17; */
+}
+
+.promo-box h2 {
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.promo-box p {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.playstore-logo {
+  width: 150px;
+  border-radius: 10px;
+  border: 1px solid white;
+  padding: 0px 20px;
+  background-color: #000;
+  transition: transform 0.2s ease;
+  height: 50px;
+  object-fit: contain;
+}
+
+.playstore-logo:hover {
+  transform: scale(1.05);
+}
+
+.phone-mockup-container {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.mockup {
+  width: 30vh;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 1.1rem;
+  position: relative;
+  right: 13vh;
+}
+
+.logo-review-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  width: 60vh;
+  border-radius: 10px;
+}
+
+.review-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* flex-wrap: wrap; */
+}
+
+.star {
+  margin-left: 2px;
+}
+
+.logo-review-container h4 {
+  margin: 0;
+  margin-left: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* ========== TABLETS (≤1024px) ========== */
+@media (max-width: 1024px) {
+  .phonebook-wrapper {
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 20px;
+  }
+
+  .promo-box {
+    width: 90%;
+    height: auto;
+    padding: 30px 25px;
+    text-align: center;
+  }
+
+  .promo-box h2 {
+    font-size: 2.2rem;
+  }
+
+  .promo-box p {
+    font-size: 1.3rem;
+  }
+
+  .logo-review-container {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .playstore-logo {
+    width: 140px;
+    height: auto;
+  }
+
+  .logo-review-container h4 {
+    font-size: 15px;
+  }
+
+  .phone-mockup-container {
+    display: none;
+  }
+}
+
+/* ========== MOBILE & SMALL TABLETS (≤768px) ========== */
+@media (max-width: 768px) {
+  .promo-box {
+    padding: 25px 20px;
+  }
+
+  .promo-box h2 {
+    font-size: 2rem;
+  }
+
+  .promo-box p {
+    font-size: 1.1rem;
+  }
+
+  .playstore-logo {
+    width: 130px;
+  }
+
+  .logo-review-container h4 {
+    font-size: 14px;
+  }
+}
+
+/* ========== SMALL MOBILE DEVICES (≤576px) ========== */
+@media (max-width: 576px) {
+  .promo-box {
+    padding: 20px 15px;
+  }
+
+  .promo-box h2 {
+    font-size: 1.6rem;
+  }
+
+  .promo-box p {
+    font-size: 1rem;
+  }
+
+  .playstore-logo {
+    width: 120px;
+  }
+
+  .logo-review-container h4 {
+    font-size: 13px;
+  }
+}
+
+ .premium-card-with-bg {
+  height: 260px;
+  border-radius: 0.75rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.premium-card-with-bg:hover {
+  transform: translateY(-4px);
+}
+
+.premium-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #f953c6, #b91d73);
+  z-index: 1;
+}
+
+.premium-ribbon {
+  position: absolute;
+  top: 13px;
+  right: -25px;
+  background: #ffae00;
+  color: #fff;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 5px 0;
+  width: 100px;
+  transform: rotate(48deg);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.premium-card-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.premium-card-content h5,
+.premium-card-content p {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.premium-profile-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.premium-description-text  {
+  font-size: 3rem;
+  color: #3b85d0;
+  line-height: 1.1;
+  /* padding: -20px 0px 20px 0px; */
+  position: relative;
+  top: -20px;
+}
+
+.Premium-Name{
+  font-weight: 800;
+}
+
+.Premium-City{
+  font-size: 10em;
+}
+
+.PremiumEnquireBtn{
+  position: relative;
+  top: -30px;
+}

@@ -1,0 +1,8 @@
+.desktop-layout {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.desktop-content {
+  padding: 24px 32px;
+}

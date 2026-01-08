@@ -1,0 +1,136 @@
+/* src/pages/SettingsPage.css */
+.settings-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.settings-header {
+  padding: 16px;
+  text-align: center;
+  background: transparent;
+}
+
+.settings-header h1 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.settings-content {
+  padding: 0 20px 40px;
+}
+
+/* Profile Header Card */
+.profile-header-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #1e88e5, #acd6f6);
+  color: white;
+  padding: 18px;
+  border-radius: 18px;
+  margin: 20px 0 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: white;
+  color: #1e88e5;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.profile-info p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* Action Cards (Sign In / Sign Up / Logout) */
+.auth-cards,
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-card,
+.menu-item {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-card:hover,
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.icon-bg {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-bg.blue { background-color: rgba(30, 136, 229, 0.1); color: #1e88e5; }
+.icon-bg.green { background-color: rgba(76, 175, 80, 0.1); color: #4caf50; }
+.icon-bg.orange { background-color: rgba(255, 152, 0, 0.1); color: #ff9800; }
+.icon-bg.teal { background-color: rgba(0, 150, 136, 0.1); color: #009688; }
+.icon-bg.purple { background-color: rgba(156, 39, 176, 0.1); color: #9c27b0; }
+.icon-bg.deep-orange { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; }
+.icon-bg.red { background-color: rgba(244, 67, 54, 0.1); color: #f44336; }
+
+.action-card span,
+.menu-item span {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.arrow {
+  font-size: 15px !important;
+  color: #9ca3af;
+}
+
+/* Logout Card */
+.logout-card {
+  margin-top: 20px;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  font-size: 18px;
+  color: #6b7280;
+}

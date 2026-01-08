@@ -1,0 +1,408 @@
+ 
+.search-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-header {
+  background: white;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.search-inputs {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.search-field {
+  flex: 5;
+  position: relative;
+  transition: flex 0.3s ease;
+}
+
+.search-field.expanded {
+  flex: 8;
+}
+
+.search-field input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  border: none;
+  border-radius: 25px;
+  /* background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>') no-repeat 14px center; */
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 22px;
+  pointer-events: none;
+}
+
+.results-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 20px;
+}
+
+.loader, .no-results {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+ 
+.gold-card {
+  background: linear-gradient(135deg, #b87333, #FFD700);
+  border: 5px solid #FFD700;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.gold-inner {
+  background: white;
+  margin: 2px;
+  border-radius: 12px;
+  padding: 12px;
+  position: relative;
+}
+.gold-inner,
+.tier-card {
+  position: relative;
+}
+.gold-content {
+  padding-right: 130px;
+}
+
+.gold-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gold-name-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gold-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+.gold-premium-icon {
+  color: #FFD700;
+  font-size: 18px;
+}
+
+.gold-verified-icon {
+  color: green;
+  font-size: 18px;
+}
+
+.gold-actions {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.gold-call, .gold-favorite {
+  font-size: 28px;
+}
+
+.gold-call { color: green; }
+.gold-favorite { color: pink; }
+
+.gold-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.gold-detail-icon {
+  font-size: 14px;
+  color: #666;
+}
+
+.gold-enquire-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 100px;
+  height: 44px;
+  background: linear-gradient(135deg, #b87333, #FFD700);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+ 
+.tier-card {
+  background: white;
+  border: 4px solid;
+  border-radius: 16px;
+  padding: 16px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.tier-content {
+  padding-right: 110px;
+}
+
+.tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tier-name-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tier-name {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: #333;
+}
+
+.tier-verified {
+  color: green;
+  font-size: 20px;
+}
+
+.tier-featured {
+  background: #e67e22;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.tier-actions {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.tier-call { color: green; font-size: 28px; }
+.tier-favorite { font-size: 28px; }
+
+.tier-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.tier-detail-icon {
+  font-size: 16px;
+  color: #666;
+}
+
+.tier-enquire-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 100px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+@media (max-width: 768px) {
+  .gold-card,
+  .tier-card {
+    border-radius: 14px;
+  }
+
+  .gold-name,
+  .tier-name {
+    font-size: 16px;
+  }
+
+  .gold-call,
+  .tier-call,
+  .gold-favorite,
+  .tier-favorite {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gold-enquire-btn,
+  .tier-enquire-btn {
+    width: 90px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+
+.gold-call,
+.tier-call,
+.gold-favorite,
+.tier-favorite {
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.gold-call:active,
+.tier-call:active {
+  transform: scale(0.9);
+}
+.gold-detail-icon,
+.tier-detail-icon {
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.gold-premium-icon {
+  color: #FFD700;
+}
+
+.gold-verified-icon,
+.tier-verified {
+  color: #2ecc71;
+}
+/* Favorite Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.radio-label:last-child {
+  border-bottom: none;
+}
+
+.radio-label input {
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-secondary, .btn-primary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: white;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .gold-actions,
+  .tier-actions {
+    right: 8px;
+    gap: 10px;
+  }
+
+  .gold-content,
+  .tier-content {
+    padding-right: 115px;
+  }
+}
