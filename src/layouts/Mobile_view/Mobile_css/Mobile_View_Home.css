@@ -649,3 +649,20 @@
 .firm-avatar svg {
   stroke-width: 1.8;
 }
+
+
+.home-video-section {
+  width: 100%;
+  margin: 12px 0 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+}
+
+.home-video {
+  width: 100%;
+  height: auto;
+  max-height: 260px;
+  object-fit: cover;
+  display: block;
+}

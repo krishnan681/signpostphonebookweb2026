@@ -33,6 +33,9 @@ const MobileViewHome = () => {
     const [loadingBanners, setLoadingBanners] = useState(true);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [loadingFirms, setLoadingFirms] = useState(true);
+    const [homeVideoUrl, setHomeVideoUrl] = useState(null);
+    const [loadingVideo, setLoadingVideo] = useState(true);
+
 
     // Demo fallback data
     const demoB2C = [
@@ -62,6 +65,7 @@ const MobileViewHome = () => {
     const loadAllData = async () => {
         await Promise.all([
             loadUserAndWelcome(),
+            loadHomeVideo(),
             loadBanners(),
             loadCategories(),
             loadPopularFirms(),
@@ -97,6 +101,32 @@ const MobileViewHome = () => {
 
         setWelcomeMessage(`Welcome ${name}`);
     };
+
+    const loadHomeVideo = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("home_medias")
+                .select("video_url")
+                .eq("is_active", true)
+                .order("updated_at", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                console.error("Video fetch error:", error);
+                setHomeVideoUrl(null);
+                return;
+            }
+
+            setHomeVideoUrl(data?.video_url || null);
+        } catch (err) {
+            console.error(err);
+            setHomeVideoUrl(null);
+        } finally {
+            setLoadingVideo(false);
+        }
+    };
+
 
     const loadBanners = async () => {
         try {
@@ -207,6 +237,26 @@ const MobileViewHome = () => {
             {/* Main Content */}
             <main className="mobile-main">
                 <h2 className="welcome-text">{welcomeMessage}</h2>
+
+                {!loadingVideo && homeVideoUrl && (
+                    <section className="home-video-section">
+                        <video
+                            src={homeVideoUrl}
+                            controls
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="home-video"
+                            onError={(e) => console.error('Video error:', e)}
+                            onLoadedMetadata={() => console.log('Video metadata loaded')}
+                            onCanPlay={() => console.log('Video can play')}
+                        >
+                            Your browser does not support the video tag.
+                        </video>
+                    </section>
+                )}
+
 
                 {/* Banners */}
                 <div className="banner-section">

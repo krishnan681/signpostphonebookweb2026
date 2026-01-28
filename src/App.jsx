@@ -1,57 +1,70 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useWindowSize } from "./hooks/useWindowSize";
 import { useAuth } from "./context/AuthContext";
+import { FavoritesProvider } from "./context/FavoritesContext"; // fixed path
 
+/* Layouts */
 import MobileLayout from "./layouts/Mobile_view/Mobile_layout";
 import DesktopLayout from "./layouts/Desktop_view/Desktop_layout";
 
+/* Public pages */
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+
+/* Protected pages */
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+/* Mobile pages */
 import MobileViewHome from "./layouts/Mobile_view/Mobile_View_Home";
-import SearchPage from "./layouts/Mobile_view/SearchPage"; 
-
-import DesktopLogin from "./pages/auth/DesktopLogin";
-
+import SearchPage from "./layouts/Mobile_view/SearchPage";
 import ModelPage from "./layouts/Mobile_view/ModelPage";
 import SettingsPage from "./layouts/Mobile_view/settingspage";
 import SigninPage from "./layouts/Mobile_view/Mobile_Signin_Page";
 
+/* Desktop pages */
+import DesktopViewHome from "./layouts/Desktop_view/Desktop_View_Home";
+import DesktopSearchPage from "./layouts/Desktop_view/DesptopSearchPage"; // keep original file name
+import ProfileDetailPage from './layouts/Desktop_view/ProfileDetailPage';
+
 function App() {
   const { width } = useWindowSize();
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const isMobile = width < 768;
 
-  if (loading) return null; // Or a full-screen loader
+  if (loading) return null;
 
   const RoutesWrapper = (
     <Routes>
-      {/* Mobile Home */}
+      {/* Home */}
       <Route
         path="/"
-        element={
-          isMobile
-            ? <MobileViewHome />
-            : user
-              ? <Navigate to="/dashboard" />
-              : <DesktopLogin />
-        }
+        element={isMobile ? <MobileViewHome /> : <DesktopViewHome />}
       />
 
-      {isMobile && <Route path="/search" element={<SearchPage />} />}
-      {isMobile && <Route path="/Modal" element={<ModelPage />} />}
-      {isMobile && <Route path="/settingspage" element={<SettingsPage />} />}
-      {isMobile && <Route path="/SigninPage" element={<SigninPage />} />}
+      {/* Desktop pages */}
+      {!isMobile && (
+        <>
+          <Route path="/directory" element={<DesktopSearchPage />} />
+          <Route path="/profile/:id" element={<ProfileDetailPage />} />
+        </>
+      )}
 
+      {/* Mobile pages */}
+      {isMobile && (
+        <>
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/modal" element={<ModelPage />} />
+          <Route path="/settingspage" element={<SettingsPage />} />
+          <Route path="/signinpage" element={<SigninPage />} />
+        </>
+      )}
 
-      {/* Auth Routes */}
+      {/* Auth pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Protected Dashboard */}
+      {/* Protected pages */}
       <Route
         path="/dashboard"
         element={
@@ -61,16 +74,19 @@ function App() {
         }
       />
 
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" />} />
+      {/* Catch-all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 
-  return isMobile ? (
-    <MobileLayout>{RoutesWrapper}</MobileLayout>
-  ) : (
-    <DesktopLayout>{RoutesWrapper}</DesktopLayout>
+  return (
+    <FavoritesProvider>
+      {isMobile ? (
+        <MobileLayout>{RoutesWrapper}</MobileLayout>
+      ) : (
+        <DesktopLayout>{RoutesWrapper}</DesktopLayout>
+      )}
+    </FavoritesProvider>
   );
 }
 

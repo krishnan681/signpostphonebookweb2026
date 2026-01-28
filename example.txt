@@ -1,0 +1,56 @@
+
+context
+    AuthContext.jsx
+CSS
+hooks
+    useWindowSize.js
+layouts
+    Desktop_view
+        Desktop_css
+            Desktop_layout.css
+            DesktopNavbar.css   
+    Desktop_layout.jsx
+    DesktopNavbar.jsx
+    Mobile_view
+        Mobile_css
+            Mobile_layout.css
+            Mobile_Signin_Page.css
+            Mobile_View_Home.css
+            MobileNavbar.css
+    ModalPage.css
+    SearchPage.css
+    settingspage.css
+    Mobile_layout.jsx
+    Mobile_Signin_Page.jsx
+    Mobile_View_Home.jsx
+    MobileNavbar.jsx
+    ModelPage.jsx
+    SearchPage.jsx
+    settingspage.jsx
+pages
+    auth
+        DesktopLogin.jsx
+        MobileLogin.jsx
+Dashboard.jsx
+home.jsx
+Login.jsx
+Signup.jsx
+
+routes
+    ProtectedRoute.jsx
+services
+    supabaseClient.js
+App.css
+App.jsx
+index.css
+main.jsx
+.env
+.gitignore
+eslint.config.js
+example.txt
+index.html
+netlify.toml
+package-lock.json
+package.json
+README.md
+vite.config.js

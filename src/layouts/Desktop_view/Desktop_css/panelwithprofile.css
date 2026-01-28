@@ -1,0 +1,204 @@
+/* ───────── Layout ───────── */
+.panel-section {
+  padding: 40px 40px 20px 40px;
+}
+
+.section-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+/* 4 cards per row */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* ───────── Card ───────── */
+.featured-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease;
+}
+
+.featured-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Banner */
+.featured-banner img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+
+/* Content */
+.featured-profile {
+  padding: 14px;
+}
+
+.featured-profile h4 {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verifiedicon {
+  color: #006400;
+  font-size: 18px;
+}
+
+.location-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 6px;
+}
+
+/* Keywords */
+.keyword-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.keyword-row span {
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+/* ───────── Fade In ───────── */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ───────── Skeleton ───────── */
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-banner {
+  height: 160px;
+  background: #e5e7eb;
+}
+
+.skeleton-content {
+  padding: 14px;
+}
+
+.skeleton-line {
+  height: 14px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.title {
+  width: 70%;
+}
+
+.skeleton-line.small {
+  width: 40%;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 6px;
+}
+
+.skeleton-tags span {
+  width: 48px;
+  height: 18px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+/* Priority highlight */
+.skeleton.priority {
+  box-shadow: 0 0 0 2px #2563eb inset;
+}
+
+/* Shimmer */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer 1.3s infinite;
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ───────── Buttons ───────── */
+.load-more-container {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.load-more-btn,
+.load-less-btn {
+  padding: 10px 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.load-more-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.load-less-btn {
+  background: #e5e7eb;
+}
+
+/* ───────── Responsive ───────── */
+@media (max-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
