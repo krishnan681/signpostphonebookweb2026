@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../services/supabaseClient";
 import { MdVerified } from "react-icons/md";
-import "./Desktop_css/Panelwithprofile.css";
+import "./Desktop_css/panelwithprofile.css";
 
 /* ─────────────────────────────
    Skeleton Card
