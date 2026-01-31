@@ -490,7 +490,7 @@
 
 
 import { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../services/supabaseClient";
 import "./Desktop_css/ProfileDetailPage.css";
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
@@ -498,9 +498,12 @@ import { MdVerified } from "react-icons/md";
 import FavoriteModal from "../Desktop_view/FavoriteModal";
 
 const ProfileDetailPage = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const profile = location.state?.profile;
+
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -509,15 +512,13 @@ const ProfileDetailPage = () => {
   const [secondaryProducts, setSecondaryProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("overview"); // ← changed default
+  const [activeTab, setActiveTab] = useState("overview");
   const [isFavorite, setIsFavorite] = useState(false);
   const [showFavoriteModal, setShowFavoriteModal] = useState(false);
 
-  // Rating state (moved to hero for GBP feel)
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
-  // Extended form fields to match screenshot
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -529,143 +530,144 @@ const ProfileDetailPage = () => {
 
   const autoScrollRef = useRef(null);
 
-  if (!profile) {
-    navigate(-1);
-    return null;
-  }
-
-  const profileId = profile.id;
-  const subscription = (profile.subscription || "").toLowerCase();
-  const isPrime = profile.is_prime === true;
-
-  const tier =
-    isPrime || subscription === "gold"
-      ? "gold"
-      : subscription === "business"
-        ? "business"
-        : subscription === "normal_business"
-          ? "normal_business"
-          : "free";
-
-  const displayName =
-    profile.business_name ||
-    `${profile.person_prefix || ""} ${profile.person_name || ""}`.trim() ||
-    "User";
-
-  // ── Your dynamic enquiry content logic (kept unchanged) ──
-  const getEnquiryContent = () => {
-    const category = (profile.category || "").toLowerCase();
-
-    return {
-      title: `Connect with <span>${displayName}</span>`,
-      sub: "Get in touch directly or send an enquiry instantly",
-      question: "How can we assist you today?",
-      options: ["General Enquiry", "Get Quote"],
-    };
-  };
-
-  const enquiry = getEnquiryContent();
-
-  // ── Data loading (your original logic kept) ──
+  // Fetch profile
   useEffect(() => {
-    if (!profileId) return;
-
-    if (tier === "free") {
-      loadFreeTierImages();
-    } else {
-      loadCoverPhoto();
+    if (!id) {
+      navigate(-1);
+      return;
     }
 
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select(`
+            id,
+            business_name,
+            person_name,
+            person_prefix,
+            business_prefix,
+            city,
+            pincode,
+            address,
+            mobile_number,
+            landline,
+            landline_code,
+            email,
+            description,
+            keywords,
+            subscription,
+            is_prime,
+            profile_image,
+            web_site,
+            whats_app,
+            discount,
+            priority
+          `)
+          .eq("id", id)
+          .single();
+
+        if (error) throw error;
+        if (!data) {
+          setError("Profile not found");
+          return;
+        }
+
+        setProfile(data);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || "Failed to load profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id, navigate]);
+
+  // Load banner + products
+  useEffect(() => {
+    if (!profile?.id) return;
+
+    loadBannerImage();
     loadProducts();
 
     return () => clearInterval(autoScrollRef.current);
-  }, [profileId]);
+  }, [profile]);
 
   useEffect(() => {
-    if (tier !== "free" || images.length === 0) return;
+    if (images.length <= 1) return;
 
     autoScrollRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(autoScrollRef.current);
-  }, [images, tier]);
+  }, [images]);
 
-  const loadFreeTierImages = async () => {
-    const { data } = await supabase
-      .from("free_tier_shared_header_images")
-      .select("image_url")
-      .order("sort_order", { ascending: true });
-
-    if (data?.length) {
-      setImages(data.map((i) => i.image_url));
-    }
-  };
-
-  const loadCoverPhoto = async () => {
+  const loadBannerImage = async () => {
     const { data } = await supabase
       .from("users_table")
       .select("cover_photo")
-      .eq("user_id", profileId)
+      .eq("user_id", profile.id) // assuming user_id = profiles.id
       .maybeSingle();
 
     if (data?.cover_photo) {
       setImages([data.cover_photo]);
+    } else if (profile.profile_image) {
+      setImages([profile.profile_image]);
     }
   };
 
   const loadProducts = async () => {
     setLoadingProducts(true);
+    try {
+      const { data: descRows } = await supabase
+        .from("product_des_table")
+        .select("prod_des_id, product_desc")
+        .eq("userId", profile.id);
 
-    const { data: descRows } = await supabase
-      .from("product_des_table")
-      .select("prod_des_id, product_desc")
-      .eq("userId", profileId);
+      if (!descRows?.length) return;
 
-    if (!descRows?.length) {
+      const ids = descRows.map((r) => r.prod_des_id);
+      const descMap = Object.fromEntries(descRows.map((r) => [r.prod_des_id, r.product_desc]));
+
+      const { data: prodRows } = await supabase
+        .from("product_table")
+        .select("product_id, prod_des_id, product_name, product_image, product_description, price")
+        .in("prod_des_id", ids);
+
+      const priority = [];
+      const secondary = [];
+
+      prodRows?.forEach((p) => {
+        const prod = {
+          id: p.product_id,
+          name: p.product_name,
+          image: p.product_image,
+          description: p.product_description,
+          price: p.price,
+        };
+        if (descMap[p.prod_des_id]?.toLowerCase().includes("priority")) {
+          priority.push(prod);
+        } else {
+          secondary.push(prod);
+        }
+      });
+
+      setPriorityProducts(priority);
+      setSecondaryProducts(secondary);
+    } catch (err) {
+      console.error("Products error:", err);
+    } finally {
       setLoadingProducts(false);
-      return;
     }
-
-    const ids = descRows.map((r) => r.prod_des_id);
-    const descMap = {};
-    descRows.forEach((r) => {
-      descMap[r.prod_des_id] = r.product_desc;
-    });
-
-    const { data: prodRows } = await supabase
-      .from("product_table")
-      .select("product_id, prod_des_id, product_name, product_image, product_description, price")
-      .in("prod_des_id", ids);
-
-    const priority = [];
-    const secondary = [];
-
-    prodRows?.forEach((p) => {
-      const product = {
-        id: p.product_id,
-        name: p.product_name,
-        image: p.product_image,
-        description: p.product_description,
-        price: p.price,
-      };
-
-      if (descMap[p.prod_des_id] === "priority") {
-        priority.push(product);
-      } else {
-        secondary.push(product);
-      }
-    });
-
-    setPriorityProducts(priority);
-    setSecondaryProducts(secondary);
-    setLoadingProducts(false);
   };
 
   const formatMobile = (n) =>
     n?.length >= 5 ? `${n.slice(0, 5)} XXXXX` : n || "Not available";
 
-  // ── Form handlers (extended for more fields) ──
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -673,29 +675,29 @@ const ProfileDetailPage = () => {
   };
 
   const validateForm = () => {
-    let errors = {};
-    let isValid = true;
+    const errors = {};
+    let valid = true;
 
     if (!formData.name.trim()) {
       errors.name = "Name is required";
-      isValid = false;
+      valid = false;
     }
     if (!formData.mobile.trim()) {
       errors.mobile = "Mobile number is required";
-      isValid = false;
+      valid = false;
     } else if (!/^\d{10}$/.test(formData.mobile.trim())) {
-      errors.mobile = "Enter a valid 10-digit mobile number";
-      isValid = false;
+      errors.mobile = "Enter valid 10-digit number";
+      valid = false;
     }
 
     setFormErrors(errors);
-    return isValid;
+    return valid;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      alert("Enquiry submitted successfully!");
+      alert("Enquiry submitted!");
       setFormData({
         name: "",
         mobile: "",
@@ -706,18 +708,28 @@ const ProfileDetailPage = () => {
     }
   };
 
+  if (loading) return <div className="profile-loading">Loading profile...</div>;
+  if (error || !profile) return <div className="profile-error">{error || "Profile not found"}</div>;
+
+  const displayName =
+    profile.business_name ||
+    profile.person_name ||
+    "Business";
+
+  const isPremium = profile.is_prime || profile.subscription?.toLowerCase() !== "free";
+
+  const enquiry = {
+    title: `Connect with <span>${displayName}</span>`,
+    sub: "Get in touch directly or send an enquiry instantly",
+    question: "How can we assist you today?",
+    options: ["General Enquiry", "Get Quote"],
+  };
 
   return (
     <div className="profile-detail-page gbp-layout">
-
-
       <div className="hero">
         {images.length > 0 ? (
-          <img
-            src={images[currentIndex]}
-            alt="Cover"
-            className="hero-image"
-          />
+          <img src={images[currentIndex]} alt="Banner" className="hero-image" />
         ) : (
           <div className="hero-placeholder" />
         )}
@@ -726,7 +738,7 @@ const ProfileDetailPage = () => {
           <div className="business-info">
             <h1 className="business-name">
               {displayName}
-              {profile.is_verified && <MdVerified className="verified-icon" />}
+              {isPremium && <MdVerified className="verified-icon" />}
             </h1>
 
             <div className="rating-row">
@@ -741,7 +753,6 @@ const ProfileDetailPage = () => {
                   />
                 ))}
               </div>
-
             </div>
 
             <div className="hero-actions">
@@ -757,7 +768,6 @@ const ProfileDetailPage = () => {
         </div>
       </div>
 
-      {/* Tabs */}
       <nav className="tabs-bar">
         {["Overview", "Photos", "About", "Location"].map((tab) => (
           <button
@@ -771,51 +781,60 @@ const ProfileDetailPage = () => {
       </nav>
 
       <div className="main-content">
-        {/* Left / Main column */}
         <main className="main-column">
           {activeTab === "overview" && (
-            <>
+            <section className="about-section">
+              <h3>About {displayName}</h3>
+              {profile.description && <p>{profile.description}</p>}
 
-              <section className="about-section">
-                <h3>About {displayName}</h3>
-                {profile.description && <p>{profile.description}</p>}
-
-
-                <div className="core-services">
-                  <h4>Our Core Services (Products)</h4>
-                  <div className="chips">
-                    {profile.keywords ? (
-                      profile.keywords
-                        .split(/[,;]\s*/)
-                        .map((keyword) => keyword.trim())
-                        .filter(Boolean)
-                        .map((keyword, index) => (
-                          <span key={index} className="chip">
-                            {keyword}
-                          </span>
-                        ))
-                    ) : (
-                      <span className="no-keywords">No services listed yet</span>
-                    )}
-                  </div>
+              <div className="core-services">
+                <h4>Our Core Services</h4>
+                <div className="chips">
+                  {profile.keywords ? (
+                    profile.keywords
+                      .split(/[,;]\s*/)
+                      .map((k) => k.trim())
+                      .filter(Boolean)
+                      .map((keyword, i) => (
+                        <span key={i} className="chip">
+                          {keyword}
+                        </span>
+                      ))
+                  ) : (
+                    <span className="no-keywords">No services listed yet</span>
+                  )}
                 </div>
-              </section>
-            </>
+              </div>
+            </section>
           )}
 
           {activeTab === "about" && (
             <section className="about-full">
-              {/* Your original about content */}
               {profile.person_name && (
-                <p><strong>Name:</strong> {profile.person_prefix || ""} {profile.person_name}</p>
+                <p><strong>Name:</strong> {profile.person_name}</p>
+              )}
+              {profile.business_name && (
+                <p><strong>Business:</strong> {profile.business_name}</p>
               )}
               {profile.address && (
-                <p><strong>Address:</strong> {profile.address}, {profile.city}, {profile.pincode}</p>
+                <p>
+                  <strong>Address:</strong> {profile.address}, {profile.city}{" "}
+                  {profile.pincode}
+                </p>
               )}
               {profile.mobile_number && (
                 <p><strong>Mobile:</strong> {formatMobile(profile.mobile_number)}</p>
               )}
-              {profile.landline && <p><strong>Landline:</strong> {profile.landline}</p>}
+              {profile.landline && (
+                <p><strong>Landline:</strong> {profile.landline}</p>
+              )}
+              {profile.email && <p><strong>Email:</strong> {profile.email}</p>}
+              {profile.web_site && (
+                <p><strong>Website:</strong> <a href={profile.web_site}>{profile.web_site}</a></p>
+              )}
+              {profile.whats_app && (
+                <p><strong>WhatsApp:</strong> {profile.whats_app}</p>
+              )}
               {profile.description && (
                 <>
                   <h4>Description</h4>
@@ -825,7 +844,7 @@ const ProfileDetailPage = () => {
             </section>
           )}
 
-          {activeTab === "products" && (tier === "gold" || tier === "business") && (
+          {activeTab === "products" && isPremium && (
             <section className="products-section">
               {loadingProducts ? (
                 <p>Loading products...</p>
@@ -865,21 +884,19 @@ const ProfileDetailPage = () => {
 
           {activeTab === "location" && (
             <div className="location-placeholder">
-              <h3>Service Area & Map</h3>
-              <div className="map-box">Map placeholder – {profile.city || "Bay Area"}</div>
+              <h3>Service Area</h3>
+              <div className="map-box">
+                Map placeholder – {profile.city || "Location"} {profile.pincode || ""}
+              </div>
             </div>
           )}
         </main>
 
-
         <aside className="sidebar">
-          {/* RIGHT PANEL - Enquiry Form with Validation */}
           <div className="right-panel">
             <div className="enquiry-card">
               <h3 dangerouslySetInnerHTML={{ __html: enquiry.title }} />
-
               <p className="sub">{enquiry.sub}</p>
-
               <p className="question">{enquiry.question}</p>
 
               <div className="radio-group">
@@ -918,13 +935,11 @@ const ProfileDetailPage = () => {
                 </label>
 
                 <button type="submit" className="send-btn">
-                  Send Enquiry &raquo;&raquo;&raquo;
+                  Send Enquiry »
                 </button>
               </form>
             </div>
           </div>
-
-
         </aside>
       </div>
 

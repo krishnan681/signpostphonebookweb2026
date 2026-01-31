@@ -27,26 +27,29 @@ const SkeletonCard = ({ priority }) => (
 ───────────────────────────── */
 const Card = ({
   id,
-  businessName,
+  displayName,
   location,
   bannerImg,
   keywords,
   subscription,
-  profileData,
+  is_prime,
 }) => {
   const navigate = useNavigate();
 
   return (
     <div
       className="featured-card fade-in"
-      onClick={() =>
-        navigate(`/profile/${id}`, { state: { profile: profileData } })
-      }
+      onClick={() => navigate(`/profile/${id}`)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") navigate(`/profile/${id}`);
+      }}
     >
       <div className="featured-banner">
         <img
           src={bannerImg || "/images/default-banner.jpg"}
-          alt={businessName}
+          alt={displayName}
           loading="lazy"
           onError={(e) => (e.target.src = "/images/default-banner.jpg")}
         />
@@ -54,16 +57,17 @@ const Card = ({
 
       <div className="featured-profile">
         <h4>
-          {businessName}
-          {subscription && (
-            <MdVerified className="verifiedicon" title="Verified Business" />
+          {displayName}
+          {(subscription !== "free" || is_prime) && (
+            <MdVerified className="verifiedicon" title="Premium / Verified" />
           )}
         </h4>
 
-        <p className="location-text">{location}</p>
+        <p className="location-text">{location || "India"}</p>
 
         {keywords && (
-          <div className="keyword-row"> <h5>Products :</h5>
+          <div className="keyword-row">
+            <h5>Products :</h5>
             {keywords
               .split(",")
               .slice(0, 3)
@@ -100,34 +104,45 @@ const Panelwithprofile = () => {
           user_name,
           profiles:profiles!users_table_user_id_fkey (
             id,
-            city,
             business_name,
             person_name,
+            city,
             keywords,
-            subscription
+            subscription,
+            is_prime
           )
         `)
         .not("cover_photo", "is", null)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) {
+        console.error("Fetch error:", error.message);
+      }
+
+      if (data) {
         setCards(
-          data.map((item) => ({
-            id: item.profiles?.id,
-            businessName:
-              item.profiles?.business_name ||
-              item.profiles?.person_name ||
-              item.user_name,
-            location: item.profiles?.city || "India",
-            bannerImg: item.cover_photo,
-            keywords: item.profiles?.keywords,
-            subscription: item.profiles?.subscription,
-            profileData: item.profiles,
-          }))
+          data
+            .filter((item) => item.profiles?.id)
+            .map((item) => {
+              const p = item.profiles;
+              return {
+                id: p.id,
+                displayName:
+                  p.business_name ||
+                  p.person_name ||
+                  item.user_name ||
+                  "Business",
+                location: p.city,
+                bannerImg: item.cover_photo,
+                keywords: p.keywords,
+                subscription: p.subscription,
+                is_prime: p.is_prime,
+              };
+            })
         );
       }
 
-      setTimeout(() => setLoading(false), 900); // smooth fade
+      setTimeout(() => setLoading(false), 800);
     };
 
     fetchFeatured();
@@ -136,7 +151,7 @@ const Panelwithprofile = () => {
   const visibleCards = cards.slice(0, visibleCount);
 
   return (
-    <section className=" panel-section">
+    <section className="panel-section">
       <h2 className="section-title">Featured Businesses</h2>
 
       <div className="cards-grid">
@@ -144,9 +159,7 @@ const Panelwithprofile = () => {
           ? Array.from({ length: INITIAL_COUNT }).map((_, i) => (
               <SkeletonCard key={i} priority={i < 2} />
             ))
-          : visibleCards.map((card, i) => (
-              <Card key={i} {...card} />
-            ))}
+          : visibleCards.map((card) => <Card key={card.id} {...card} />)}
       </div>
 
       {!loading && cards.length > INITIAL_COUNT && (
@@ -154,9 +167,7 @@ const Panelwithprofile = () => {
           {visibleCount < cards.length ? (
             <button
               className="load-more-btn"
-              onClick={() =>
-                setVisibleCount((prev) => prev + LOAD_MORE_COUNT)
-              }
+              onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_COUNT)}
             >
               Load More
             </button>
@@ -165,7 +176,7 @@ const Panelwithprofile = () => {
               className="load-less-btn"
               onClick={() => setVisibleCount(INITIAL_COUNT)}
             >
-              Load Less
+              Show Less
             </button>
           )}
         </div>
