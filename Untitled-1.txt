@@ -1,0 +1,109 @@
+ 
+├── 📁 public/
+│   └── 🖼️ vite.svg
+├── 📁 src/
+│   ├── 📁 assets/
+│   │   ├── 📁 Images/
+│   │   │   ├── 📁 Logo/
+│   │   │   │   └── 🖼️ Login Page Logo.jpg
+│   │   │   ├── 🖼️ AboutPageImage.jpg
+│   │   │   ├── 🖼️ Asset1.png
+│   │   │   ├── 🖼️ CNC.webp
+│   │   │   ├── 🖼️ Electrical.webp
+│   │   │   ├── 🖼️ Google-Play-Emblema.png
+│   │   │   ├── 🖼️ HowitWorks1.png
+│   │   │   ├── 🖼️ HowitWorks2.png
+│   │   │   ├── 🖼️ HowitWorks3.png
+│   │   │   ├── 🖼️ LandingPageImage.png
+│   │   │   ├── 🖼️ LoginPageImg1.png
+│   │   │   ├── 🖼️ LoginPageImg2.png
+│   │   │   ├── 🖼️ Machinery.webp
+│   │   │   ├── 🖼️ Mobile-about_app.png
+│   │   │   ├── 🖼️ Mobile-about_app2.png
+│   │   │   ├── 🖼️ Motor.webp
+│   │   │   ├── 🖼️ PhoneMockup.png
+│   │   │   ├── 🖼️ Product1.png
+│   │   │   ├── 🖼️ Product2.png
+│   │   │   ├── 🖼️ Product3.png
+│   │   │   ├── 🖼️ Product4.png
+│   │   │   ├── 🖼️ Textiles.webp
+│   │   │   ├── 🖼️ TimelineLogo.png
+│   │   │   ├── 🖼️ WaterPump.webp
+│   │   │   ├── 🖼️ contact.jpg
+│   │   │   └── 🖼️ v.jpg
+│   │   └── 🖼️ react.svg
+│   ├── 📁 context/
+│   │   ├── 📄 AuthContext.jsx
+│   │   └── 📄 FavoritesContext.jsx
+│   ├── 📁 css/
+│   │   └── 🎨 home.css
+│   ├── 📁 hooks/
+│   │   └── 📄 useWindowSize.js
+│   ├── 📁 layouts/
+│   │   ├── 📁 Desktop_view/
+│   │   │   ├── 📁 Desktop_css/
+│   │   │   │   ├── 🎨 CategoryForLandingPage.css
+│   │   │   │   ├── 🎨 DesktopNavbar.css
+│   │   │   │   ├── 🎨 Desktop_View_Home.css
+│   │   │   │   ├── 🎨 Desktop_layout.css
+│   │   │   │   ├── 🎨 DesptopSearchPage.css
+│   │   │   │   ├── 🎨 FavoriteModal.css
+│   │   │   │   ├── 🎨 FeatureList.css
+│   │   │   │   ├── 🎨 ProfileDetailPage.css
+│   │   │   │   └── 🎨 panelwithprofile.css
+│   │   │   ├── 📁 components/
+│   │   │   │   ├── 📁 css/
+│   │   │   │   │   └── 🎨 RecentlyListEnquiryModal.css
+│   │   │   │   └── 📄 RecentlyListEnquiryModal.jsx
+│   │   │   ├── 📄 CategoryForLandingPage.jsx
+│   │   │   ├── 📄 DesktopNavbar.jsx
+│   │   │   ├── 📄 Desktop_View_Home.jsx
+│   │   │   ├── 📄 Desktop_layout.jsx
+│   │   │   ├── 📄 DesptopSearchPage.jsx
+│   │   │   ├── 📄 FavoriteModal.jsx
+│   │   │   ├── 📄 FeatureLists.jsx
+│   │   │   ├── 📄 Panelwithprofile.jsx
+│   │   │   └── 📄 ProfileDetailPage.jsx
+│   │   └── 📁 Mobile_view/
+│   │       ├── 📁 Mobile_css/
+│   │       │   ├── 🎨 MobileNavbar.css
+│   │       │   ├── 🎨 Mobile_Signin_Page.css
+│   │       │   ├── 🎨 Mobile_View_Home.css
+│   │       │   ├── 🎨 Mobile_layout.css
+│   │       │   ├── 🎨 ModalPage.css
+│   │       │   ├── 🎨 SearchPage.css
+│   │       │   └── 🎨 settingspage.css
+│   │       ├── 📄 MobileNavbar.jsx
+│   │       ├── 📄 Mobile_Signin_Page.jsx
+│   │       ├── 📄 Mobile_View_Home.jsx
+│   │       ├── 📄 Mobile_layout.jsx
+│   │       ├── 📄 ModelPage.jsx
+│   │       ├── 📄 SearchPage.jsx
+│   │       └── 📄 settingspage.jsx
+│   ├── 📁 pages/
+│   │   ├── 📁 auth/
+│   │   │   ├── 📄 DesktopLogin.jsx
+│   │   │   └── 📄 MobileLogin.jsx
+│   │   ├── 📄 Dashboard.jsx
+│   │   ├── 📄 Login.jsx
+│   │   ├── 📄 Signup.jsx
+│   │   └── 📄 home.jsx
+│   ├── 📁 routes/
+│   │   └── 📄 ProtectedRoute.jsx
+│   ├── 📁 services/
+│   │   └── 📄 supabaseClient.js
+│   ├── 🎨 App.css
+│   ├── 📄 App.jsx
+│   ├── 🎨 index.css
+│   └── 📄 main.jsx
+├── ⚙️ .gitignore
+├── 📝 README.md
+├── 📄 eslint.config.js
+├── 📄 example.txt
+├── 🌐 index.html
+├── ⚙️ netlify.toml
+├── ⚙️ package-lock.json
+├── ⚙️ package.json
+└── 📄 vite.config.js
+
+ 

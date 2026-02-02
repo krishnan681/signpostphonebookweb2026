@@ -489,15 +489,623 @@
 // export default ProfileDetailPage;
 
 
+// import { useEffect, useState, useRef } from "react";
+// import { useParams, useNavigate } from "react-router-dom";
+// import { supabase } from "../../services/supabaseClient";
+// import "./Desktop_css/ProfileDetailPage.css";
+// import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
+// import { MdVerified } from "react-icons/md";
+// import FavoriteModal from "../Desktop_view/FavoriteModal";
+
+// const ProfileDetailPage = () => {
+//   const { id } = useParams();
+//   const navigate = useNavigate();
+
+//   const [profile, setProfile] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const [images, setImages] = useState([]);
+//   const [currentIndex, setCurrentIndex] = useState(0);
+
+//   const [priorityProducts, setPriorityProducts] = useState([]);
+//   const [secondaryProducts, setSecondaryProducts] = useState([]);
+//   const [loadingProducts, setLoadingProducts] = useState(false);
+
+//   const [activeTab, setActiveTab] = useState("overview");
+//   const [isFavorite, setIsFavorite] = useState(false);
+//   const [showFavoriteModal, setShowFavoriteModal] = useState(false);
+
+//   const [userRating, setUserRating] = useState(0);
+//   const [hoverRating, setHoverRating] = useState(0);
+
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     mobile: "",
+//     preferredDate: "",
+//     preferredTime: "Morning",
+//     serviceNeeded: "",
+//   });
+//   const [formErrors, setFormErrors] = useState({});
+
+//   const autoScrollRef = useRef(null);
+
+//   // Fetch profile
+//   useEffect(() => {
+//     if (!id) {
+//       navigate(-1);
+//       return;
+//     }
+
+//     const fetchProfile = async () => {
+//       setLoading(true);
+//       try {
+//         const { data, error } = await supabase
+//           .from("profiles")
+//           .select(`
+//             id,
+//             business_name,
+//             person_name,
+//             person_prefix,
+//             business_prefix,
+//             city,
+//             pincode,
+//             address,
+//             mobile_number,
+//             landline,
+//             landline_code,
+//             email,
+//             description,
+//             keywords,
+//             subscription,
+//             is_prime,
+//             profile_image,
+//             web_site,
+//             whats_app,
+//             discount,
+//             priority
+//           `)
+//           .eq("id", id)
+//           .single();
+
+//         if (error) throw error;
+//         if (!data) {
+//           setError("Profile not found");
+//           return;
+//         }
+
+//         setProfile(data);
+//       } catch (err) {
+//         console.error(err);
+//         setError(err.message || "Failed to load profile");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProfile();
+//   }, [id, navigate]);
+
+//   // Load banner + products
+//   useEffect(() => {
+//     if (!profile?.id) return;
+
+//     loadBannerImage();
+//     loadProducts();
+
+//     return () => clearInterval(autoScrollRef.current);
+//   }, [profile]);
+
+//   useEffect(() => {
+//     if (images.length <= 1) return;
+
+//     autoScrollRef.current = setInterval(() => {
+//       setCurrentIndex((prev) => (prev + 1) % images.length);
+//     }, 5000);
+
+//     return () => clearInterval(autoScrollRef.current);
+//   }, [images]);
+
+// const loadBannerImage = async () => {
+//   const { data } = await supabase
+//     .from("users_table")
+//     .select("cover_photo")
+//     .eq("user_id", profile.id) // assuming user_id = profiles.id
+//     .maybeSingle();
+
+//   if (data?.cover_photo) {
+//     setImages([data.cover_photo]);
+//   } else if (profile.profile_image) {
+//     setImages([profile.profile_image]);
+//   }
+// };
+
+//   const loadProducts = async () => {
+//     setLoadingProducts(true);
+//     try {
+//       const { data: descRows } = await supabase
+//         .from("product_des_table")
+//         .select("prod_des_id, product_desc")
+//         .eq("userId", profile.id);
+
+//       if (!descRows?.length) return;
+
+//       const ids = descRows.map((r) => r.prod_des_id);
+//       const descMap = Object.fromEntries(descRows.map((r) => [r.prod_des_id, r.product_desc]));
+
+//       const { data: prodRows } = await supabase
+//         .from("product_table")
+//         .select("product_id, prod_des_id, product_name, product_image, product_description, price")
+//         .in("prod_des_id", ids);
+
+//       const priority = [];
+//       const secondary = [];
+
+//       prodRows?.forEach((p) => {
+//         const prod = {
+//           id: p.product_id,
+//           name: p.product_name,
+//           image: p.product_image,
+//           description: p.product_description,
+//           price: p.price,
+//         };
+//         if (descMap[p.prod_des_id]?.toLowerCase().includes("priority")) {
+//           priority.push(prod);
+//         } else {
+//           secondary.push(prod);
+//         }
+//       });
+
+//       setPriorityProducts(priority);
+//       setSecondaryProducts(secondary);
+//     } catch (err) {
+//       console.error("Products error:", err);
+//     } finally {
+//       setLoadingProducts(false);
+//     }
+//   };
+
+//   const formatMobile = (n) =>
+//     n?.length >= 5 ? `${n.slice(0, 5)} XXXXX` : n || "Not available";
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({ ...prev, [name]: value }));
+//     setFormErrors((prev) => ({ ...prev, [name]: "" }));
+//   };
+
+//   const validateForm = () => {
+//     const errors = {};
+//     let valid = true;
+
+//     if (!formData.name.trim()) {
+//       errors.name = "Name is required";
+//       valid = false;
+//     }
+//     if (!formData.mobile.trim()) {
+//       errors.mobile = "Mobile number is required";
+//       valid = false;
+//     } else if (!/^\d{10}$/.test(formData.mobile.trim())) {
+//       errors.mobile = "Enter valid 10-digit number";
+//       valid = false;
+//     }
+
+//     setFormErrors(errors);
+//     return valid;
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     if (validateForm()) {
+//       alert("Enquiry submitted!");
+//       setFormData({
+//         name: "",
+//         mobile: "",
+//         preferredDate: "",
+//         preferredTime: "Morning",
+//         serviceNeeded: "",
+//       });
+//     }
+//   };
+
+//   if (loading) return <div className="profile-loading">Loading profile...</div>;
+//   if (error || !profile) return <div className="profile-error">{error || "Profile not found"}</div>;
+
+//   const displayName =
+//     profile.business_name ||
+//     profile.person_name ||
+//     "Business";
+
+//   const isPremium = profile.is_prime || profile.subscription?.toLowerCase() !== "free";
+
+//   const enquiry = {
+//     title: `Connect with <span>${displayName}</span>`,
+//     sub: "Get in touch directly or send an enquiry instantly",
+//     question: "How can we assist you today?",
+//     options: ["General Enquiry", "Get Quote"],
+//   };
+
+//   return (
+//     <div className="profile-detail-page gbp-layout">
+//       <div className="hero">
+//         {images.length > 0 ? (
+//           <img src={images[currentIndex]} alt="Banner" className="hero-image" />
+//         ) : (
+//           <div className="hero-placeholder" />
+//         )}
+
+//         <div className="hero-overlay-card">
+//           <div className="business-info">
+//             <h1 className="business-name">
+//               {displayName}
+//               {isPremium && <MdVerified className="verified-icon" />}
+//             </h1>
+
+//             <div className="rating-row">
+//               <div className="interactive-stars">
+//                 {[1, 2, 3, 4, 5].map((star) => (
+//                   <FaStar
+//                     key={star}
+//                     className={`star ${star <= (hoverRating || userRating) ? "filled" : ""}`}
+//                     onClick={() => setUserRating(star)}
+//                     onMouseEnter={() => setHoverRating(star)}
+//                     onMouseLeave={() => setHoverRating(0)}
+//                   />
+//                 ))}
+//               </div>
+//             </div>
+
+//             <div className="hero-actions">
+//               <button className="share">Share</button>
+//               <button
+//                 className={`save ${isFavorite ? "active" : ""}`}
+//                 onClick={() => setShowFavoriteModal(true)}
+//               >
+//                 {isFavorite ? <FaHeart /> : <FaRegHeart />} Save
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <nav className="tabs-bar">
+//         {["Overview", "Photos", "About", "Location"].map((tab) => (
+//           <button
+//             key={tab}
+//             className={activeTab === tab.toLowerCase() ? "active" : ""}
+//             onClick={() => setActiveTab(tab.toLowerCase())}
+//           >
+//             {tab}
+//           </button>
+//         ))}
+//       </nav>
+
+//       <div className="main-content">
+//         <main className="main-column">
+//           {activeTab === "overview" && (
+//             <section className="about-section">
+//               <h3>About {displayName}</h3>
+//               {profile.description && <p>{profile.description}</p>}
+
+//               <div className="core-services">
+//                 <h4>Our Core Services</h4>
+//                 <div className="chips">
+//                   {profile.keywords ? (
+//                     profile.keywords
+//                       .split(/[,;]\s*/)
+//                       .map((k) => k.trim())
+//                       .filter(Boolean)
+//                       .map((keyword, i) => (
+//                         <span key={i} className="chip">
+//                           {keyword}
+//                         </span>
+//                       ))
+//                   ) : (
+//                     <span className="no-keywords">No services listed yet</span>
+//                   )}
+//                 </div>
+//               </div>
+//             </section>
+//           )}
+
+//           {activeTab === "about" && (
+//             <section className="about-full">
+//               {profile.person_name && (
+//                 <p><strong>Name:</strong> {profile.person_name}</p>
+//               )}
+//               {profile.business_name && (
+//                 <p><strong>Business:</strong> {profile.business_name}</p>
+//               )}
+//               {profile.address && (
+//                 <p>
+//                   <strong>Address:</strong> {profile.address}, {profile.city}{" "}
+//                   {profile.pincode}
+//                 </p>
+//               )}
+//               {profile.mobile_number && (
+//                 <p><strong>Mobile:</strong> {formatMobile(profile.mobile_number)}</p>
+//               )}
+//               {profile.landline && (
+//                 <p><strong>Landline:</strong> {profile.landline}</p>
+//               )}
+//               {profile.email && <p><strong>Email:</strong> {profile.email}</p>}
+//               {profile.web_site && (
+//                 <p><strong>Website:</strong> <a href={profile.web_site}>{profile.web_site}</a></p>
+//               )}
+//               {profile.whats_app && (
+//                 <p><strong>WhatsApp:</strong> {profile.whats_app}</p>
+//               )}
+//               {profile.description && (
+//                 <>
+//                   <h4>Description</h4>
+//                   <p>{profile.description}</p>
+//                 </>
+//               )}
+//             </section>
+//           )}
+
+//           {activeTab === "products" && isPremium && (
+//             <section className="products-section">
+//               {loadingProducts ? (
+//                 <p>Loading products...</p>
+//               ) : priorityProducts.length === 0 && secondaryProducts.length === 0 ? (
+//                 <p>No products listed yet.</p>
+//               ) : (
+//                 <>
+//                   {priorityProducts.length > 0 && (
+//                     <>
+//                       <h3>Featured Products</h3>
+//                       {priorityProducts.map((p) => (
+//                         <div key={p.id} className="product priority">
+//                           <h4>{p.name}</h4>
+//                           {p.image && <img src={p.image} alt={p.name} />}
+//                           {p.price && <div className="price">₹{p.price}</div>}
+//                           {p.description && <p>{p.description}</p>}
+//                         </div>
+//                       ))}
+//                     </>
+//                   )}
+//                   {secondaryProducts.length > 0 && (
+//                     <>
+//                       <h4>Other Products</h4>
+//                       {secondaryProducts.map((p) => (
+//                         <div key={p.id} className="product-card">
+//                           <h4>{p.name}</h4>
+//                           {p.image && <img src={p.image} alt={p.name} />}
+//                           {p.description && <p>{p.description}</p>}
+//                         </div>
+//                       ))}
+//                     </>
+//                   )}
+//                 </>
+//               )}
+//             </section>
+//           )}
+
+//           {activeTab === "location" && (
+//             <div className="location-placeholder">
+//               <h3>Service Area</h3>
+//               <div className="map-box">
+//                 Map placeholder – {profile.city || "Location"} {profile.pincode || ""}
+//               </div>
+//             </div>
+//           )}
+//         </main>
+
+//         <aside className="sidebar">
+//           <div className="right-panel">
+//             <div className="enquiry-card">
+//               <h3 dangerouslySetInnerHTML={{ __html: enquiry.title }} />
+//               <p className="sub">{enquiry.sub}</p>
+//               <p className="question">{enquiry.question}</p>
+
+//               <div className="radio-group">
+//                 {enquiry.options.map((opt, i) => (
+//                   <label key={i}>
+//                     <input type="radio" name="service" defaultChecked={i === 0} />
+//                     {opt}
+//                   </label>
+//                 ))}
+//               </div>
+
+//               <form onSubmit={handleSubmit}>
+//                 <input
+//                   type="text"
+//                   name="name"
+//                   placeholder="Name *"
+//                   value={formData.name}
+//                   onChange={handleInputChange}
+//                   className={formErrors.name ? "input-error" : ""}
+//                 />
+//                 {formErrors.name && <span className="error-text">{formErrors.name}</span>}
+
+//                 <input
+//                   type="tel"
+//                   name="mobile"
+//                   placeholder="Mobile Number *"
+//                   value={formData.mobile}
+//                   onChange={handleInputChange}
+//                   className={formErrors.mobile ? "input-error" : ""}
+//                 />
+//                 {formErrors.mobile && <span className="error-text">{formErrors.mobile}</span>}
+
+//                 <label className="terms">
+//                   <input type="checkbox" defaultChecked />
+//                   I Agree to <a href="#">T&C’s</a> <a href="#">Privacy Policy</a>
+//                 </label>
+
+//                 <button type="submit" className="send-btn">
+//                   Send Enquiry »
+//                 </button>
+//               </form>
+//             </div>
+//           </div>
+//         </aside>
+//       </div>
+
+//       <FavoriteModal
+//         isOpen={showFavoriteModal}
+//         onClose={() => setShowFavoriteModal(false)}
+//         businessName={displayName}
+//         mobile={profile.mobile_number}
+//       />
+//     </div>
+//   );
+// };
+
+// export default ProfileDetailPage;
+
+// ================= ProfileDetail.jsx =================
+
+// import "./Desktop_css/ProfileDetailPage.css";
+
+
+// export default function ProfileDetail() {
+//   return (
+//     <main className="container">
+//       <div className="main-grid">
+//         {/* Left Column */}
+//         <div className="left-col">
+//           {/* Profile Header */}
+//           <section className="profile-header">
+//             <div
+//               className="cover-photo"
+//               style={{
+//                 backgroundImage:
+//                   'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgCysHY95IBKh2NmTkfi1SP6PA3B1YcGzvxSJ_dyHddiEzOVGhlg_H0sXXxj0aPmt2Qshj5QHaggBekB9s57Fy3A0EA8NCZd03jAZtQ7TsJx21W-wmWWoQ7ULzWzTnJnGOA4IehePKK7i40HjRErkT8qb7iDqz6AbzAZjOLbayFZbcmRhgcPM1_cDvkHci6iYJYN2VuqqTgrTqnQWvM59tb2RTrV0h3NawrxWeyvMCsBVj5_03pFgm7mZIdr7rGVxDqtEYWrZ1V5Ob")',
+//               }}
+//             />
+
+//             <div className="profile-content">
+//               <div className="profile-top">
+//                 <div className="profile-left">
+//                   <div className="name-verified">
+//                     <h1 className="business-name">Acme Plumbing & Rooter</h1>
+//                     <span className="material-symbols-outlined verified-icon">
+//                       check_circle
+//                     </span>
+//                   </div>
+//                 </div>
+
+//                 <div className="action-buttons">
+//                   <button className="action-btn">
+//                     <span className="material-symbols-outlined">share</span>
+//                     Share
+//                   </button>
+//                   <button className="action-btn">
+//                     <span className="material-symbols-outlined">favorite</span>
+//                     Save
+//                   </button>
+//                 </div>
+//               </div>
+//             </div>
+//           </section>
+
+//           {/* Navigation */}
+//           <nav className="sticky-nav">
+//             <a href="#overview" className="nav-link active">Overview</a>
+//             <a href="#photos" className="nav-link">Photos</a>
+//             <a href="#about" className="nav-link">About</a>
+//             <a href="#reviews" className="nav-link">Reviews</a>
+//             <a href="#location" className="nav-link">Location</a>
+//           </nav>
+
+//           {/* About */}
+//           <section id="about">
+//             <h2>About Acme Plumbing & Rooter</h2>
+//             <div className="about-text">
+//               <p>
+//                 With over 20 years of dedicated service in the local community,
+//                 Acme Plumbing & Rooter has built a reputation for excellence,
+//                 reliability, and unparalleled technical expertise.
+//               </p>
+//               <p className="mt">
+//                 We offer 24/7 emergency response with transparent pricing and
+//                 state-licensed professionals.
+//               </p>
+//             </div>
+
+//             <div className="services">
+//               <h3>Our Core Services</h3>
+//               <div className="core-services-list">
+//                 <span className="service-tag">Emergency Repairs</span>
+//                 <span className="service-tag">Drain Cleaning</span>
+//                 <span className="service-tag">Water Heater Service</span>
+//                 <span className="service-tag">Sewer Line Repair</span>
+//                 <span className="service-tag">Hydro Jetting</span>
+//                 <span className="service-tag">Gas Line Service</span>
+//               </div>
+//             </div>
+//           </section>
+//         </div>
+
+//         {/* Sidebar */}
+//         <aside className="sidebar">
+//           <div className="booking-card">
+//             <h3 className="booking-title">Book a Consultation</h3>
+//             <p className="response-time">Average response time: 15 minutes</p>
+
+//             <form className="booking-form">
+//               <input className="form-input" placeholder="Full Name" />
+//               <input className="form-input" placeholder="Phone Number" />
+
+//               <div className="form-date-row">
+//                 <input className="form-input" type="date" />
+//                 <select className="form-select">
+//                   <option>Morning</option>
+//                   <option>Afternoon</option>
+//                   <option>Evening</option>
+//                 </select>
+//               </div>
+
+//               <select className="form-select">
+//                 <option>Select a service...</option>
+//                 <option>Emergency Repair</option>
+//                 <option>Drain Cleaning</option>
+//                 <option>Water Heater</option>
+//                 <option>Inspection</option>
+//               </select>
+
+//               <button className="submit-btn">Enquire Now</button>
+//             </form>
+//           </div>
+
+//           <div className="location-card" id="location">
+//             <h3 className="location-title">Service Area</h3>
+//             <div className="map-container">
+//               <div
+//                 className="map-overlay"
+//                 style={{
+//                   backgroundImage:
+//                     'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDxSoSItCdLA_E77pBIY9qKLJqgFVIS0o_cXHgqqDdaN0-sDmndPVnGb6HkxsPj8cpItz8G4TyWa2s1--eH922UGC7WCIHVbKVRkYs5vARmkLgHhNFjQFNYU3QJJBpNzFbHqz-mNamGz_dRUdaxIhPkwYoNCzVvccKDh0idPWydjZFGr_sYQSdRBZhmHu33l9G9uOzdwdPtZ0MVKdgz4HegHvJVOc7AEKaviGo_Us1NQ_mefeAFSiG54-FZptoT4zxMx3PBtMqgq9jX")',
+//                 }}
+//               />
+//               <div className="map-label">
+//                 <div className="map-label-inner">
+//                   Serving San Francisco & Bay Area
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </aside>
+//       </div>
+//     </main>
+//   );
+// }
+
+
+
+// ================= ProfileDetailPage.jsx =================
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../services/supabaseClient";
 import "./Desktop_css/ProfileDetailPage.css";
+
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import FavoriteModal from "../Desktop_view/FavoriteModal";
 
-const ProfileDetailPage = () => {
+export default function ProfileDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -508,10 +1116,6 @@ const ProfileDetailPage = () => {
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [priorityProducts, setPriorityProducts] = useState([]);
-  const [secondaryProducts, setSecondaryProducts] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(false);
-
   const [activeTab, setActiveTab] = useState("overview");
   const [isFavorite, setIsFavorite] = useState(false);
   const [showFavoriteModal, setShowFavoriteModal] = useState(false);
@@ -519,26 +1123,29 @@ const ProfileDetailPage = () => {
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    mobile: "",
-    preferredDate: "",
-    preferredTime: "Morning",
-    serviceNeeded: "",
-  });
-  const [formErrors, setFormErrors] = useState({});
-
   const autoScrollRef = useRef(null);
 
-  // Fetch profile
-  useEffect(() => {
-    if (!id) {
-      navigate(-1);
-      return;
+  // Load banner / cover image
+  const loadBannerImage = async (profileId) => {
+    const { data, error } = await supabase
+      .from("users_table")
+      .select("cover_photo")
+      .eq("user_id", profileId)
+      .maybeSingle();
+
+    if (data?.cover_photo) {
+      setImages([data.cover_photo]);
+    } else if (profile?.profile_image) {
+      setImages([profile.profile_image]);
+    } else {
+      setImages(["/default-cover.jpg"]); // fallback
     }
+  };
+
+  useEffect(() => {
+    if (!id) return navigate(-1);
 
     const fetchProfile = async () => {
-      setLoading(true);
       try {
         const { data, error } = await supabase
           .from("profiles")
@@ -546,38 +1153,23 @@ const ProfileDetailPage = () => {
             id,
             business_name,
             person_name,
-            person_prefix,
-            business_prefix,
             city,
             pincode,
             address,
             mobile_number,
-            landline,
-            landline_code,
             email,
             description,
             keywords,
-            subscription,
             is_prime,
-            profile_image,
-            web_site,
-            whats_app,
-            discount,
-            priority
+            profile_image
           `)
           .eq("id", id)
           .single();
 
         if (error) throw error;
-        if (!data) {
-          setError("Profile not found");
-          return;
-        }
-
         setProfile(data);
       } catch (err) {
-        console.error(err);
-        setError(err.message || "Failed to load profile");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -586,359 +1178,128 @@ const ProfileDetailPage = () => {
     fetchProfile();
   }, [id, navigate]);
 
-  // Load banner + products
   useEffect(() => {
-    if (!profile?.id) return;
-
-    loadBannerImage();
-    loadProducts();
-
-    return () => clearInterval(autoScrollRef.current);
+    if (profile?.id) {
+      loadBannerImage(profile.id);
+    }
   }, [profile]);
 
+  // Auto-slide images
   useEffect(() => {
     if (images.length <= 1) return;
-
     autoScrollRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, 5000);
-
     return () => clearInterval(autoScrollRef.current);
   }, [images]);
 
-  const loadBannerImage = async () => {
-    const { data } = await supabase
-      .from("users_table")
-      .select("cover_photo")
-      .eq("user_id", profile.id) // assuming user_id = profiles.id
-      .maybeSingle();
-
-    if (data?.cover_photo) {
-      setImages([data.cover_photo]);
-    } else if (profile.profile_image) {
-      setImages([profile.profile_image]);
-    }
-  };
-
-  const loadProducts = async () => {
-    setLoadingProducts(true);
-    try {
-      const { data: descRows } = await supabase
-        .from("product_des_table")
-        .select("prod_des_id, product_desc")
-        .eq("userId", profile.id);
-
-      if (!descRows?.length) return;
-
-      const ids = descRows.map((r) => r.prod_des_id);
-      const descMap = Object.fromEntries(descRows.map((r) => [r.prod_des_id, r.product_desc]));
-
-      const { data: prodRows } = await supabase
-        .from("product_table")
-        .select("product_id, prod_des_id, product_name, product_image, product_description, price")
-        .in("prod_des_id", ids);
-
-      const priority = [];
-      const secondary = [];
-
-      prodRows?.forEach((p) => {
-        const prod = {
-          id: p.product_id,
-          name: p.product_name,
-          image: p.product_image,
-          description: p.product_description,
-          price: p.price,
-        };
-        if (descMap[p.prod_des_id]?.toLowerCase().includes("priority")) {
-          priority.push(prod);
-        } else {
-          secondary.push(prod);
-        }
-      });
-
-      setPriorityProducts(priority);
-      setSecondaryProducts(secondary);
-    } catch (err) {
-      console.error("Products error:", err);
-    } finally {
-      setLoadingProducts(false);
-    }
-  };
-
-  const formatMobile = (n) =>
-    n?.length >= 5 ? `${n.slice(0, 5)} XXXXX` : n || "Not available";
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setFormErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const validateForm = () => {
-    const errors = {};
-    let valid = true;
-
-    if (!formData.name.trim()) {
-      errors.name = "Name is required";
-      valid = false;
-    }
-    if (!formData.mobile.trim()) {
-      errors.mobile = "Mobile number is required";
-      valid = false;
-    } else if (!/^\d{10}$/.test(formData.mobile.trim())) {
-      errors.mobile = "Enter valid 10-digit number";
-      valid = false;
-    }
-
-    setFormErrors(errors);
-    return valid;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      alert("Enquiry submitted!");
-      setFormData({
-        name: "",
-        mobile: "",
-        preferredDate: "",
-        preferredTime: "Morning",
-        serviceNeeded: "",
-      });
-    }
-  };
-
   if (loading) return <div className="profile-loading">Loading profile...</div>;
-  if (error || !profile) return <div className="profile-error">{error || "Profile not found"}</div>;
+  if (error || !profile) return <div className="profile-error">Profile not found</div>;
 
-  const displayName =
-    profile.business_name ||
-    profile.person_name ||
-    "Business";
-
-  const isPremium = profile.is_prime || profile.subscription?.toLowerCase() !== "free";
-
-  const enquiry = {
-    title: `Connect with <span>${displayName}</span>`,
-    sub: "Get in touch directly or send an enquiry instantly",
-    question: "How can we assist you today?",
-    options: ["General Enquiry", "Get Quote"],
-  };
+  const displayName = profile.business_name || profile.person_name || "Business";
 
   return (
-    <div className="profile-detail-page gbp-layout">
-      <div className="hero">
-        {images.length > 0 ? (
-          <img src={images[currentIndex]} alt="Banner" className="hero-image" />
-        ) : (
-          <div className="hero-placeholder" />
-        )}
+    <main className="container">
+      <div className="main-grid">
+        <div>
+         
+          <section className="profile-header">
+            <div
+              className="cover-photo"
+              style={{ backgroundImage: `url(${images[currentIndex] || "/default-cover.jpg"})` }}
+            />
 
-        <div className="hero-overlay-card">
-          <div className="business-info">
-            <h1 className="business-name">
-              {displayName}
-              {isPremium && <MdVerified className="verified-icon" />}
-            </h1>
+            <div className="profile-info">
+              <div className="name-verified">
+                <h1 className="business-name">{displayName}</h1>
+                {profile.is_prime && <MdVerified className="verified-icon" />}
+              </div>
 
-            <div className="rating-row">
-              <div className="interactive-stars">
-                {[1, 2, 3, 4, 5].map((star) => (
+              <div className="rating-row">
+                {[1, 2, 3, 4, 5].map((s) => (
                   <FaStar
-                    key={star}
-                    className={`star ${star <= (hoverRating || userRating) ? "filled" : ""}`}
-                    onClick={() => setUserRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
+                    key={s}
+                    className={`star ${s <= (hoverRating || userRating) ? "filled" : ""}`}
+                    onClick={() => setUserRating(s)}
+                    onMouseEnter={() => setHoverRating(s)}
                     onMouseLeave={() => setHoverRating(0)}
                   />
                 ))}
               </div>
+
+              <div className="action-buttons">
+                <button className="action-btn">Share</button>
+                <button
+                  className="action-btn"
+                  onClick={() => setShowFavoriteModal(true)}
+                >
+                  {isFavorite ? <FaHeart /> : <FaRegHeart />} Save
+                </button>
+              </div>
             </div>
 
-            <div className="hero-actions">
-              <button className="share">Share</button>
+
+          </section>
+
+          {/* Sticky Nav */}
+          <nav className="sticky-nav">
+            {["overview", "about", "location"].map((tab) => (
               <button
-                className={`save ${isFavorite ? "active" : ""}`}
-                onClick={() => setShowFavoriteModal(true)}
+                key={tab}
+                className={`nav-link ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
               >
-                {isFavorite ? <FaHeart /> : <FaRegHeart />} Save
+                {tab.toUpperCase()}
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
+            ))}
+          </nav>
 
-      <nav className="tabs-bar">
-        {["Overview", "Photos", "About", "Location"].map((tab) => (
-          <button
-            key={tab}
-            className={activeTab === tab.toLowerCase() ? "active" : ""}
-            onClick={() => setActiveTab(tab.toLowerCase())}
-          >
-            {tab}
-          </button>
-        ))}
-      </nav>
-
-      <div className="main-content">
-        <main className="main-column">
+          {/* Tab Content */}
           {activeTab === "overview" && (
-            <section className="about-section">
-              <h3>About {displayName}</h3>
-              {profile.description && <p>{profile.description}</p>}
+            <section className="content-section">
+              <h2>About {displayName}</h2>
+              <p className="about-text">{profile.description || "No description available."}</p>
 
-              <div className="core-services">
-                <h4>Our Core Services</h4>
-                <div className="chips">
-                  {profile.keywords ? (
-                    profile.keywords
-                      .split(/[,;]\s*/)
-                      .map((k) => k.trim())
-                      .filter(Boolean)
-                      .map((keyword, i) => (
-                        <span key={i} className="chip">
-                          {keyword}
-                        </span>
-                      ))
-                  ) : (
-                    <span className="no-keywords">No services listed yet</span>
-                  )}
-                </div>
+              <h3 className="sub-title">Core Services</h3>
+              <div className="core-services-list">
+                {profile.keywords
+                  ?.split(/[,;]/)
+                  .map((k, i) => (
+                    <span key={i} className="service-tag">
+                      {k.trim()}
+                    </span>
+                  )) || <p>No services listed</p>}
               </div>
             </section>
           )}
 
           {activeTab === "about" && (
-            <section className="about-full">
-              {profile.person_name && (
-                <p><strong>Name:</strong> {profile.person_name}</p>
-              )}
-              {profile.business_name && (
-                <p><strong>Business:</strong> {profile.business_name}</p>
-              )}
-              {profile.address && (
-                <p>
-                  <strong>Address:</strong> {profile.address}, {profile.city}{" "}
-                  {profile.pincode}
-                </p>
-              )}
-              {profile.mobile_number && (
-                <p><strong>Mobile:</strong> {formatMobile(profile.mobile_number)}</p>
-              )}
-              {profile.landline && (
-                <p><strong>Landline:</strong> {profile.landline}</p>
-              )}
-              {profile.email && <p><strong>Email:</strong> {profile.email}</p>}
-              {profile.web_site && (
-                <p><strong>Website:</strong> <a href={profile.web_site}>{profile.web_site}</a></p>
-              )}
-              {profile.whats_app && (
-                <p><strong>WhatsApp:</strong> {profile.whats_app}</p>
-              )}
-              {profile.description && (
-                <>
-                  <h4>Description</h4>
-                  <p>{profile.description}</p>
-                </>
-              )}
-            </section>
-          )}
-
-          {activeTab === "products" && isPremium && (
-            <section className="products-section">
-              {loadingProducts ? (
-                <p>Loading products...</p>
-              ) : priorityProducts.length === 0 && secondaryProducts.length === 0 ? (
-                <p>No products listed yet.</p>
-              ) : (
-                <>
-                  {priorityProducts.length > 0 && (
-                    <>
-                      <h3>Featured Products</h3>
-                      {priorityProducts.map((p) => (
-                        <div key={p.id} className="product priority">
-                          <h4>{p.name}</h4>
-                          {p.image && <img src={p.image} alt={p.name} />}
-                          {p.price && <div className="price">₹{p.price}</div>}
-                          {p.description && <p>{p.description}</p>}
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  {secondaryProducts.length > 0 && (
-                    <>
-                      <h4>Other Products</h4>
-                      {secondaryProducts.map((p) => (
-                        <div key={p.id} className="product-card">
-                          <h4>{p.name}</h4>
-                          {p.image && <img src={p.image} alt={p.name} />}
-                          {p.description && <p>{p.description}</p>}
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
+            <section className="content-section">
+              <p><strong>Address:</strong> {profile.address || "—"}</p>
+              <p><strong>City:</strong> {profile.city || "—"}</p>
+              <p><strong>Pincode:</strong> {profile.pincode || "—"}</p>
+              <p><strong>Mobile:</strong> {profile.mobile_number || "—"}</p>
+              <p><strong>Email:</strong> {profile.email || "—"}</p>
             </section>
           )}
 
           {activeTab === "location" && (
-            <div className="location-placeholder">
-              <h3>Service Area</h3>
-              <div className="map-box">
-                Map placeholder – {profile.city || "Location"} {profile.pincode || ""}
-              </div>
-            </div>
+            <section className="content-section">
+              <h2>Service Area</h2>
+              <div className="map-container">Map Placeholder</div>
+            </section>
           )}
-        </main>
+        </div>
 
+        {/* Sidebar */}
         <aside className="sidebar">
-          <div className="right-panel">
-            <div className="enquiry-card">
-              <h3 dangerouslySetInnerHTML={{ __html: enquiry.title }} />
-              <p className="sub">{enquiry.sub}</p>
-              <p className="question">{enquiry.question}</p>
-
-              <div className="radio-group">
-                {enquiry.options.map((opt, i) => (
-                  <label key={i}>
-                    <input type="radio" name="service" defaultChecked={i === 0} />
-                    {opt}
-                  </label>
-                ))}
-              </div>
-
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name *"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={formErrors.name ? "input-error" : ""}
-                />
-                {formErrors.name && <span className="error-text">{formErrors.name}</span>}
-
-                <input
-                  type="tel"
-                  name="mobile"
-                  placeholder="Mobile Number *"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  className={formErrors.mobile ? "input-error" : ""}
-                />
-                {formErrors.mobile && <span className="error-text">{formErrors.mobile}</span>}
-
-                <label className="terms">
-                  <input type="checkbox" defaultChecked />
-                  I Agree to <a href="#">T&C’s</a> <a href="#">Privacy Policy</a>
-                </label>
-
-                <button type="submit" className="send-btn">
-                  Send Enquiry »
-                </button>
-              </form>
-            </div>
+          <div className="booking-card">
+            <h3>Book a Consultation</h3>
+            <form className="booking-form">
+              <input className="form-input" placeholder="Name" />
+              <input className="form-input" placeholder="Mobile" />
+              <button className="submit-btn">Send Enquiry</button>
+            </form>
           </div>
         </aside>
       </div>
@@ -949,8 +1310,6 @@ const ProfileDetailPage = () => {
         businessName={displayName}
         mobile={profile.mobile_number}
       />
-    </div>
+    </main>
   );
-};
-
-export default ProfileDetailPage;
+}
