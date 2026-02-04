@@ -1063,11 +1063,14 @@
 // import { useAuth } from "../../context/AuthContext";
 // import { useFavorites } from "../../context/FavoritesContext";
 // import Swal from "sweetalert2";
-// import FavoriteModal from "../Desktop_view/components/FavoriteModal";
+
 // import RecentlyListEnquiryModal from "../Desktop_view/components/RecentlyListEnquiryModal";
+// import FavoriteModal from "../Desktop_view/FavoriteModal";
+// import { MdVerified } from "react-icons/md";
+
 
 // import { FaHeart, FaRegHeart, FaSearch, FaPhoneAlt, FaSlidersH } from "react-icons/fa";
-// import { MdVerified } from "react-icons/md";
+
 
 // import { Button, Form } from "react-bootstrap";
 // import "../Desktop_view/Desktop_css/DesptopSearchPage.css";
@@ -1577,418 +1580,420 @@
 
 
 // DesptopSearchPage.jsx
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../../services/supabaseClient";
-import "../Desktop_view/Desktop_css/DesptopSearchPage.css";
-import { FaHeart, FaRegHeart, FaPhoneAlt, FaSlidersH } from "react-icons/fa";
-import { MdVerified } from "react-icons/md";
-import Swal from "sweetalert2";
-import RecentlyListEnquiryModal from "../Desktop_view/components/RecentlyListEnquiryModal";
-import FavoriteModal from "../Desktop_view/FavoriteModal";
 
-const DesptopSearchPage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+// import { useEffect, useState } from "react";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { supabase } from "../../services/supabaseClient";
+// import "../Desktop_view/Desktop_css/DesptopSearchPage.css";
+// import { FaHeart, FaRegHeart, FaPhoneAlt, FaSlidersH } from "react-icons/fa";
+// import { MdVerified } from "react-icons/md";
+// import Swal from "sweetalert2";
+// import RecentlyListEnquiryModal from "../Desktop_view/components/RecentlyListEnquiryModal";
+// import FavoriteModal from "../Desktop_view/FavoriteModal";
 
-  // Search inputs
-  const [businessSearch, setBusinessSearch] = useState("");
-  const [personSearch, setPersonSearch] = useState("");
+// const DesptopSearchPage = () => {
+//   const location = useLocation();
+//   const navigate = useNavigate();
 
-  // Active keyword from URL (for display only)
-  const [activeKeyword, setActiveKeyword] = useState("");
+//   const [results, setResults] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [totalCount, setTotalCount] = useState(0);
 
-  const [page, setPage] = useState(1);
-  const pageSize = 12;
+//   // Search inputs
+//   const [businessSearch, setBusinessSearch] = useState("");
+//   const [personSearch, setPersonSearch] = useState("");
 
-  const [filters, setFilters] = useState({
-    sortBy: "newest",
-    userType: "",
-    membership: "",
-    verifiedOnly: false,
-  });
+//   // Active keyword from URL (for display only)
+//   const [activeKeyword, setActiveKeyword] = useState("");
 
-  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState(null);
+//   const [page, setPage] = useState(1);
+//   const pageSize = 12;
 
-  const [showFavoriteModal, setShowFavoriteModal] = useState(false);
-  const [favoriteItem, setFavoriteItem] = useState(null);
+//   const [filters, setFilters] = useState({
+//     sortBy: "newest",
+//     userType: "",
+//     membership: "",
+//     verifiedOnly: false,
+//   });
 
-  // Sync activeKeyword from URL (only for display chip)
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const urlKeyword = params.get("keywords") || "";
-    setActiveKeyword(urlKeyword.trim());
-    setPage(1); // Reset pagination when URL keyword changes
-  }, [location.search]);
+//   const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+//   const [selectedBusiness, setSelectedBusiness] = useState(null);
 
-  // Fetch results
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
+//   const [showFavoriteModal, setShowFavoriteModal] = useState(false);
+//   const [favoriteItem, setFavoriteItem] = useState(null);
 
-      const params = new URLSearchParams(location.search);
-      const urlKeyword = params.get("keywords") || "";
-      const urlLocation = params.get("location") || "";
+//   // Sync activeKeyword from URL (only for display chip)
+//   useEffect(() => {
+//     const params = new URLSearchParams(location.search);
+//     const urlKeyword = params.get("keywords") || "";
+//     setActiveKeyword(urlKeyword.trim());
+//     setPage(1); // Reset pagination when URL keyword changes
+//   }, [location.search]);
 
-      let query = supabase
-        .from("profiles")
-        .select("*", { count: "exact" });
+//   // Fetch results
+//   useEffect(() => {
+//     const fetchResults = async () => {
+//       setLoading(true);
 
-      // Collect all search terms
-      const searchTerms = [
-        urlKeyword,          // directly from URL
-        businessSearch,
-        personSearch,
-        urlLocation,
-      ]
-        .map((t) => t.trim())
-        .filter(Boolean);
+//       const params = new URLSearchParams(location.search);
+//       const urlKeyword = params.get("keywords") || "";
+//       const urlLocation = params.get("location") || "";
 
-      // Apply OR search across multiple fields
-      if (searchTerms.length > 0) {
-        const orConditions = searchTerms
-          .map(
-            (term) =>
-              `keywords.ilike.%${term}%,business_name.ilike.%${term}%,person_name.ilike.%${term}%`
-          )
-          .join(",");
-        query = query.or(orConditions);
-      }
+//       let query = supabase
+//         .from("profiles")
+//         .select("*", { count: "exact" });
 
-      // Apply filters
-      if (filters.userType === "business") {
-        query = query.eq("user_type", "business");
-      } else if (filters.userType === "person") {
-        query = query.eq("user_type", "person");
-      }
+//       // Collect all search terms
+//       const searchTerms = [
+//         urlKeyword,          // directly from URL
+//         businessSearch,
+//         personSearch,
+//         urlLocation,
+//       ]
+//         .map((t) => t.trim())
+//         .filter(Boolean);
 
-      if (filters.membership) {
-        query = query.eq("subscription", filters.membership);
-      }
+//       // Apply OR search across multiple fields
+//       if (searchTerms.length > 0) {
+//         const orConditions = searchTerms
+//           .map(
+//             (term) =>
+//               `keywords.ilike.%${term}%,business_name.ilike.%${term}%,person_name.ilike.%${term}%`
+//           )
+//           .join(",");
+//         query = query.or(orConditions);
+//       }
 
-      if (filters.verifiedOnly) {
-        query = query.not("mobile_number", "is", null);
-      }
+//       // Apply filters
+//       if (filters.userType === "business") {
+//         query = query.eq("user_type", "business");
+//       } else if (filters.userType === "person") {
+//         query = query.eq("user_type", "person");
+//       }
 
-      // Sorting
-      query = query.order("created_at", {
-        ascending: filters.sortBy === "oldest",
-      });
+//       if (filters.membership) {
+//         query = query.eq("subscription", filters.membership);
+//       }
 
-      // Pagination
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      query = query.range(from, to);
+//       if (filters.verifiedOnly) {
+//         query = query.not("mobile_number", "is", null);
+//       }
 
-      const { data, error, count } = await query;
+//       // Sorting
+//       query = query.order("created_at", {
+//         ascending: filters.sortBy === "oldest",
+//       });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        Swal.fire("Error", "Failed to load results", "error");
-        setResults([]);
-        setTotalCount(0);
-      } else {
-        setResults(data || []);
-        setTotalCount(count || 0);
-      }
+//       // Pagination
+//       const from = (page - 1) * pageSize;
+//       const to = from + pageSize - 1;
+//       query = query.range(from, to);
 
-      setLoading(false);
-    };
+//       const { data, error, count } = await query;
 
-    fetchResults();
-  }, [
-    location.search,    // URL change triggers refetch
-    businessSearch,
-    personSearch,
-    filters,
-    page,
-    // IMPORTANT: activeKeyword is NOT here anymore → fixes the flashing/reset
-  ]);
+//       if (error) {
+//         console.error("Supabase error:", error);
+//         Swal.fire("Error", "Failed to load results", "error");
+//         setResults([]);
+//         setTotalCount(0);
+//       } else {
+//         setResults(data || []);
+//         setTotalCount(count || 0);
+//       }
 
-  // Reset Filters
-  const resetFilters = () => {
-    setFilters({
-      sortBy: "newest",
-      userType: "",
-      membership: "",
-      verifiedOnly: false,
-    });
-    setPage(1);
-  };
+//       setLoading(false);
+//     };
 
-  // Remove active keyword from URL
-  const removeActiveKeyword = () => {
-    setActiveKeyword("");
-    setPage(1);
+//     fetchResults();
+//   }, [
+//     location.search,    // URL change triggers refetch
+//     businessSearch,
+//     personSearch,
+//     filters,
+//     page,
+//     // IMPORTANT: activeKeyword is NOT here anymore → fixes the flashing/reset
+//   ]);
 
-    const params = new URLSearchParams(location.search);
-    params.delete("keywords");
+//   // Reset Filters
+//   const resetFilters = () => {
+//     setFilters({
+//       sortBy: "newest",
+//       userType: "",
+//       membership: "",
+//       verifiedOnly: false,
+//     });
+//     setPage(1);
+//   };
 
-    navigate(
-      { pathname: location.pathname, search: params.toString() },
-      { replace: true }
-    );
-  };
+//   // Remove active keyword from URL
+//   const removeActiveKeyword = () => {
+//     setActiveKeyword("");
+//     setPage(1);
 
-  const totalPages = Math.ceil(totalCount / pageSize);
-  const handlePrevPage = () => setPage((p) => Math.max(p - 1, 1));
-  const handleNextPage = () => setPage((p) => Math.min(p + 1, totalPages));
+//     const params = new URLSearchParams(location.search);
+//     params.delete("keywords");
 
-  const maskMobile = (number) => {
-    if (!number || number.length < 5) return "XXXXX";
-    return number.slice(0, 5) + "xxxxx";
-  };
+//     navigate(
+//       { pathname: location.pathname, search: params.toString() },
+//       { replace: true }
+//     );
+//   };
 
-  const handleCardClick = (profile) => {
-    navigate(`/profile/${profile.id}`, { state: { profile } });
-  };
+//   const totalPages = Math.ceil(totalCount / pageSize);
+//   const handlePrevPage = () => setPage((p) => Math.max(p - 1, 1));
+//   const handleNextPage = () => setPage((p) => Math.min(p + 1, totalPages));
 
-  const handleEnquire = (profile) => {
-    setSelectedBusiness(profile);
-    setShowEnquiryModal(true);
-  };
+//   const maskMobile = (number) => {
+//     if (!number || number.length < 5) return "XXXXX";
+//     return number.slice(0, 5) + "xxxxx";
+//   };
 
-  const handleFavorite = (profile) => {
-    setFavoriteItem({
-      businessName: profile.business_name || profile.person_name || "Unnamed",
-      mobile: profile.mobile_number,
-    });
-    setShowFavoriteModal(true);
-  };
+//   const handleCardClick = (profile) => {
+//     navigate(`/profile/${profile.id}`, { state: { profile } });
+//   };
 
-  const getBorderClass = (item) => {
-    if (item.subscription === "gold") return "gold-border";
-    if (item.subscription && item.subscription !== "free") return "pink-border";
-    return "black-border";
-  };
+//   const handleEnquire = (profile) => {
+//     setSelectedBusiness(profile);
+//     setShowEnquiryModal(true);
+//   };
 
-  return (
-    <div className="desktop-search-page">
-      {/* SEARCH BARS */}
-      <div className="search-row">
-        <input
-          placeholder="Search Person / Business"
-          value={personSearch}
-          onChange={(e) => setPersonSearch(e.target.value)}
-        />
+//   const handleFavorite = (profile) => {
+//     setFavoriteItem({
+//       businessName: profile.business_name || profile.person_name || "Unnamed",
+//       mobile: profile.mobile_number,
+//     });
+//     setShowFavoriteModal(true);
+//   };
 
-        <input
-          placeholder="Search Keywords / Business"
-          value={businessSearch}
-          onChange={(e) => setBusinessSearch(e.target.value)}
-        />
-      </div>
+//   const getBorderClass = (item) => {
+//     if (item.subscription === "gold") return "gold-border";
+//     if (item.subscription && item.subscription !== "free") return "pink-border";
+//     return "black-border";
+//   };
 
-      {/* FILTERS ROW */}
-      <div className="filters-row">
-        <div className="filter-icon-wrapper">
-          <FaSlidersH className="filter-icon" />
-        </div>
+//   return (
+//     <div className="desktop-search-page">
+//       {/* SEARCH BARS */}
+//       <div className="search-row">
+//         <input
+//           placeholder="Search Person / Business"
+//           value={personSearch}
+//           onChange={(e) => setPersonSearch(e.target.value)}
+//         />
 
-        <select
-          value={filters.sortBy}
-          onChange={(e) => {
-            setFilters({ ...filters, sortBy: e.target.value });
-            setPage(1);
-          }}
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-        </select>
+//         <input
+//           placeholder="Search Keywords / Business"
+//           value={businessSearch}
+//           onChange={(e) => setBusinessSearch(e.target.value)}
+//         />
+//       </div>
 
-        <select
-          value={filters.userType}
-          onChange={(e) => {
-            setFilters({ ...filters, userType: e.target.value });
-            setPage(1);
-          }}
-        >
-          <option value="">All Types</option>
-          <option value="business">Business Only</option>
-          <option value="person">Person Only</option>
-        </select>
+//       {/* FILTERS ROW */}
+//       <div className="filters-row">
+//         <div className="filter-icon-wrapper">
+//           <FaSlidersH className="filter-icon" />
+//         </div>
 
-        <select
-          value={filters.membership}
-          onChange={(e) => {
-            setFilters({ ...filters, membership: e.target.value });
-            setPage(1);
-          }}
-        >
-          <option value="">All Members</option>
-          <option value="gold">Prime Members</option>
-          <option value="business">Business Members</option>
-          <option value="free">Free Members</option>
-        </select>
+//         <select
+//           value={filters.sortBy}
+//           onChange={(e) => {
+//             setFilters({ ...filters, sortBy: e.target.value });
+//             setPage(1);
+//           }}
+//         >
+//           <option value="newest">Newest First</option>
+//           <option value="oldest">Oldest First</option>
+//         </select>
 
-        <button
-          className={filters.verifiedOnly ? "active" : ""}
-          onClick={() => {
-            setFilters({ ...filters, verifiedOnly: !filters.verifiedOnly });
-            setPage(1);
-          }}
-        >
-          Verified Only
-        </button>
+//         <select
+//           value={filters.userType}
+//           onChange={(e) => {
+//             setFilters({ ...filters, userType: e.target.value });
+//             setPage(1);
+//           }}
+//         >
+//           <option value="">All Types</option>
+//           <option value="business">Business Only</option>
+//           <option value="person">Person Only</option>
+//         </select>
 
-        <button onClick={resetFilters} className="btn-reset">
-          Reset Filters
-        </button>
-      </div>
+//         <select
+//           value={filters.membership}
+//           onChange={(e) => {
+//             setFilters({ ...filters, membership: e.target.value });
+//             setPage(1);
+//           }}
+//         >
+//           <option value="">All Members</option>
+//           <option value="gold">Prime Members</option>
+//           <option value="business">Business Members</option>
+//           <option value="free">Free Members</option>
+//         </select>
 
-      {/* SHOW ACTIVE KEYWORD FROM POPULAR CATEGORY */}
-      {activeKeyword && (
-        <div className="active-keyword">
-          <span>
-            Showing results for: <strong>{activeKeyword}</strong>
-          </span>
-          <button onClick={removeActiveKeyword}>×</button>
-        </div>
-      )}
+//         <button
+//           className={filters.verifiedOnly ? "active" : ""}
+//           onClick={() => {
+//             setFilters({ ...filters, verifiedOnly: !filters.verifiedOnly });
+//             setPage(1);
+//           }}
+//         >
+//           Verified Only
+//         </button>
 
-      {/* RESULTS COUNT */}
-      {!loading && (
-        <h2 className="results-header">
-          {totalCount.toLocaleString()} Results Found
-        </h2>
-      )}
+//         <button onClick={resetFilters} className="btn-reset">
+//           Reset Filters
+//         </button>
+//       </div>
 
-      {/* RESULTS GRID */}
-      {loading ? (
-        <p className="loading-text">Loading...</p>
-      ) : results.length === 0 ? (
-        <p className="no-results">
-          {businessSearch || personSearch || activeKeyword
-            ? "No results found for your search"
-            : "Showing all registered businesses and profiles"}
-        </p>
-      ) : (
-        <>
-          <div className="results-grid">
-            {results.map((item) => {
-              const hasMobile = Boolean(item.mobile_number);
-              const isVerified = hasMobile;
+//       {/* SHOW ACTIVE KEYWORD FROM POPULAR CATEGORY */}
+//       {activeKeyword && (
+//         <div className="active-keyword">
+//           <span>
+//             Showing results for: <strong>{activeKeyword}</strong>
+//           </span>
+//           <button onClick={removeActiveKeyword}>×</button>
+//         </div>
+//       )}
 
-              return (
-                <div
-                  key={item.id}
-                  className={`profile-card ${getBorderClass(item)}`}
-                  onClick={() => handleCardClick(item)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <h4 className="profile-title">
-                    <span className="name-text">
-                      {item.business_name || item.person_name || "Unnamed"}
-                    </span>
-                    {isVerified && <MdVerified className="verified-inline" />}
-                  </h4>
+//       {/* RESULTS COUNT */}
+//       {!loading && (
+//         <h2 className="results-header">
+//           {totalCount.toLocaleString()} Results Found
+//         </h2>
+//       )}
 
-                  <div className="location-info">
-                    {item.city || "Unknown City"}
-                    {item.pincode ? ` - ${item.pincode}` : ""}
-                  </div>
+//       {/* RESULTS GRID */}
+//       {loading ? (
+//         <p className="loading-text">Loading...</p>
+//       ) : results.length === 0 ? (
+//         <p className="no-results">
+//           {businessSearch || personSearch || activeKeyword
+//             ? "No results found for your search"
+//             : "Showing all registered businesses and profiles"}
+//         </p>
+//       ) : (
+//         <>
+//           <div className="results-grid">
+//             {results.map((item) => {
+//               const hasMobile = Boolean(item.mobile_number);
+//               const isVerified = hasMobile;
 
-                  {hasMobile && (
-                    <div className="phone-number">
-                      {maskMobile(item.mobile_number)}
-                    </div>
-                  )}
+//               return (
+//                 <div
+//                   key={item.id}
+//                   className={`profile-card ${getBorderClass(item)}`}
+//                   onClick={() => handleCardClick(item)}
+//                   style={{ cursor: "pointer" }}
+//                 >
+//                   <h4 className="profile-title">
+//                     <span className="name-text">
+//                       {item.business_name || item.person_name || "Unnamed"}
+//                     </span>
+//                     {isVerified && <MdVerified className="verified-inline" />}
+//                   </h4>
 
-                  <div className="card-buttons">
-                    <button
-                      type="button"
-                      className="call-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.location.href = `tel:${item.mobile_number}`;
-                      }}
-                    >
-                      <FaPhoneAlt />
-                      Call
-                    </button>
+//                   <div className="location-info">
+//                     {item.city || "Unknown City"}
+//                     {item.pincode ? ` - ${item.pincode}` : ""}
+//                   </div>
 
-                    <button
-                      type="button"
-                      className="enquire-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEnquire(item);
-                      }}
-                    >
-                      Enquire Now
-                    </button>
+//                   {hasMobile && (
+//                     <div className="phone-number">
+//                       {maskMobile(item.mobile_number)}
+//                     </div>
+//                   )}
 
-                    <button
-                      type="button"
-                      className="fav-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFavorite(item);
-                      }}
-                    >
-                      <FaRegHeart size={20} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+//                   <div className="card-buttons">
+//                     <button
+//                       type="button"
+//                       className="call-btn"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         window.location.href = `tel:${item.mobile_number}`;
+//                       }}
+//                     >
+//                       <FaPhoneAlt />
+//                       Call
+//                     </button>
 
-          {/* PAGINATION */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button onClick={handlePrevPage} disabled={page === 1}>
-                Previous
-              </button>
-              <span>
-                Page {page} of {totalPages.toLocaleString()}
-              </span>
-              <button
-                onClick={handleNextPage}
-                disabled={page === totalPages}
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
+//                     <button
+//                       type="button"
+//                       className="enquire-btn"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         handleEnquire(item);
+//                       }}
+//                     >
+//                       Enquire Now
+//                     </button>
 
-      {/* Modals */}
-      <RecentlyListEnquiryModal
-        show={showEnquiryModal}
-        onClose={() => setShowEnquiryModal(false)}
-        selectedBusiness={selectedBusiness}
-      />
+//                     <button
+//                       type="button"
+//                       className="fav-btn"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         handleFavorite(item);
+//                       }}
+//                     >
+//                       <FaRegHeart size={20} />
+//                     </button>
+//                   </div>
+//                 </div>
+//               );
+//             })}
+//           </div>
 
-      <FavoriteModal
-        isOpen={showFavoriteModal}
-        onClose={() => {
-          setShowFavoriteModal(false);
-          setFavoriteItem(null);
-        }}
-        businessName={favoriteItem?.businessName || ""}
-        mobile={favoriteItem?.mobile || ""}
-        onSuccess={(groupName) => {
-          Swal.fire({
-            title: "Saved!",
-            text: `${favoriteItem?.businessName} added to ${groupName}`,
-            icon: "success",
-            timer: 2200,
-            showConfirmButton: false,
-          });
-        }}
-      />
-    </div>
-  );
-};
+//           {/* PAGINATION */}
+//           {totalPages > 1 && (
+//             <div className="pagination">
+//               <button onClick={handlePrevPage} disabled={page === 1}>
+//                 Previous
+//               </button>
+//               <span>
+//                 Page {page} of {totalPages.toLocaleString()}
+//               </span>
+//               <button
+//                 onClick={handleNextPage}
+//                 disabled={page === totalPages}
+//               >
+//                 Next
+//               </button>
+//             </div>
+//           )}
+//         </>
+//       )}
 
-export default DesptopSearchPage;
+//       {/* Modals */}
+//       <RecentlyListEnquiryModal
+//         show={showEnquiryModal}
+//         onClose={() => setShowEnquiryModal(false)}
+//         selectedBusiness={selectedBusiness}
+//       />
+
+//       <FavoriteModal
+//         isOpen={showFavoriteModal}
+//         onClose={() => {
+//           setShowFavoriteModal(false);
+//           setFavoriteItem(null);
+//         }}
+//         businessName={favoriteItem?.businessName || ""}
+//         mobile={favoriteItem?.mobile || ""}
+//         onSuccess={(groupName) => {
+//           Swal.fire({
+//             title: "Saved!",
+//             text: `${favoriteItem?.businessName} added to ${groupName}`,
+//             icon: "success",
+//             timer: 2200,
+//             showConfirmButton: false,
+//           });
+//         }}
+//       />
+//     </div>
+//   );
+// };
+
+// export default DesptopSearchPage;
 
 
 
@@ -2295,11 +2300,310 @@ export default DesptopSearchPage;
 
 
 
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../../services/supabaseClient";
+import { useFavorites } from "../../context/FavoritesContext";
+import Swal from "sweetalert2";
+
+import RecentlyListEnquiryModal from "../Desktop_view/components/RecentlyListEnquiryModal";
+import FavoriteModal from "../Desktop_view/FavoriteModal";
+import { MdVerified, MdLocationOn, MdCall, MdShare, MdAddBusiness, MdChevronLeft, MdChevronRight, MdSearch } from "react-icons/md";
+import { FaHeart, FaRegHeart, FaSearch, FaSlidersH, FaFire, FaLightbulb } from "react-icons/fa";
+import { Form } from "react-bootstrap";
+import "../Desktop_view/Desktop_css/DesptopSearchPage.css";
+
+import '../Desktop_view/components/MediaPartner';
+
+const ITEMS_PER_PAGE = 12;
+
+const DesptopSearchPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { favorites, removeFavorite } = useFavorites();
+
+  const [profiles, setProfiles] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [keywordsFocused, setKeywordsFocused] = useState(false);
+
+  const popularKeywords = ["Real Estate", "Web Design", "Legal Advice", "Consulting", "Marketing", "Interior", "Construction"];
+
+  // New State for Relevant Suggestions
+  const relevantSuggestions = ["Architects", "Contractors", "Property Management", "Home Insurance"];
+
+  const [filters, setFilters] = useState({
+    businessName: "",
+    keywords: "",
+    city: "",
+    membership: "",
+    sortBy: "newest",
+  });
+
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [showFavoriteModal, setShowFavoriteModal] = useState(false);
+  const [selectedFavoriteItem, setSelectedFavoriteItem] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setFilters((prev) => ({
+      ...prev,
+      businessName: params.get("query") || "",
+      keywords: params.get("keywords") || "",
+    }));
+    setCurrentPage(1);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (selectedFavoriteItem) {
+      setShowFavoriteModal(true);
+    }
+  }, [selectedFavoriteItem]);
+
+  const fetchProfiles = useCallback(async () => {
+    setLoading(true);
+    const from = (currentPage - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    let query = supabase
+      .from("profiles")
+      .select("*", { count: "exact" })
+      .range(from, to)
+      .order("priority", { ascending: false, nullsLast: true })
+      .order("subscription", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (filters.keywords.trim()) {
+      const terms = filters.keywords.split(",").map((k) => k.trim()).filter(Boolean);
+      const orConditions = terms.map((t) => `keywords.ilike.%${t}%`).join(",");
+      query = query.or(orConditions);
+    }
+
+    if (filters.businessName?.trim()) {
+      const term = filters.businessName.trim();
+      query = query.or(`business_name.ilike.%${term}%,person_name.ilike.%${term}%`);
+    }
+
+    if (filters.city) query = query.ilike("city", `%${filters.city}%`);
+
+    if (filters.membership === "gold") {
+      query = query.eq("subscription", "gold");
+    } else if (filters.membership === "business") {
+      query = query.neq("subscription", "gold").not("subscription", "in", "(free,null)");
+    } else if (filters.membership === "free") {
+      query = query.or("subscription.eq.free,subscription.is.null");
+    }
+
+    const { data, error, count } = await query;
+    if (!error) {
+      setProfiles(data || []);
+      setTotalCount(count || 0);
+    }
+    setLoading(false);
+  }, [currentPage, filters]);
+
+  useEffect(() => {
+    fetchProfiles();
+  }, [fetchProfiles]);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  const maskMobile = (number) =>
+    number && number.length >= 5 ? number.slice(0, 5) + "xxxxx" : "XXXXX";
+
+  const parseKeywords = (keywords) =>
+    typeof keywords === "string"
+      ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
+      : Array.isArray(keywords) ? keywords : [];
+
+  const toggleFavorite = (e, item) => {
+    e.stopPropagation();
+    const isFav = favorites.some((f) => f.id === item.id);
+    if (isFav) {
+      removeFavorite(item.id);
+    } else {
+      setSelectedFavoriteItem(item);
+    }
+  };
+
+  const handleShare = (e, item) => {
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}/profile/${item.id}`;
+    if (navigator.share) {
+      navigator.share({ title: item.business_name || item.person_name, url: shareUrl }).catch(() => { });
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      Swal.fire({ title: "Copied!", text: "Link copied to clipboard", icon: "success", timer: 1500, showConfirmButton: false });
+    }
+  };
+
+  return (
+    <div className="directory-main-wrapper">
+      <div className="directory-container">
+        <div className="directory-content">
+          {/* ... Search Form remains the same ... */}
+          <div className="top-search-card">
+            <div className="dual-search-bar">
+              <Form.Group className="search-input-group">
+                <Form.Label>Firms / Persons</Form.Label>
+                <div className="search-wrapper">
+                  <FaSearch className="search-icon" />
+                  <Form.Control
+                    value={filters.businessName}
+                    placeholder="Search Firm Name"
+                    onChange={(e) => setFilters({ ...filters, businessName: e.target.value })}
+                  />
+                </div>
+              </Form.Group>
+
+              <Form.Group className="search-input-group">
+                <Form.Label>Products / Services</Form.Label>
+                <div className="search-wrapper">
+                  <FaSearch className="search-icon" />
+                  <Form.Control
+                    value={filters.keywords}
+                    placeholder="Search Keywords"
+                    onFocus={() => setKeywordsFocused(true)}
+                    onBlur={() => setTimeout(() => setKeywordsFocused(false), 250)}
+                    onChange={(e) => setFilters({ ...filters, keywords: e.target.value })}
+                  />
+                </div>
+              </Form.Group>
+            </div>
+
+            <div className="filters-toolbar">
+              <div className="toolbar-left">
+                <FaSlidersH color="#64748b" />
+                <select value={filters.membership} onChange={(e) => setFilters({ ...filters, membership: e.target.value })}>
+                  <option value="">All Tiers</option>
+                  <option value="gold">Gold</option>
+                  <option value="business">Business</option>
+                  <option value="free">Free</option>
+                </select>
+                <div className="geo-filters">
+                  <input placeholder="City" value={filters.city} onChange={(e) => setFilters({ ...filters, city: e.target.value })} />
+                </div>
+              </div>
+              <button onClick={() => setFilters({ businessName: "", keywords: "", city: "", membership: "", sortBy: "newest" })} className="reset-link">Clear Filters</button>
+            </div>
+          </div>
+
+          <div className="results-header-text"><h2>{totalCount} Results Available</h2></div>
+
+          {loading ? (
+            <div className="loader-box">Updating...</div>
+          ) : (
+            <>
+              <div className="profiles-list-view">
+                {profiles.map((item) => {
+                  const isFavorite = favorites.some((f) => f.id === item.id);
+                  const tier = item.subscription === 'gold' ? 'gold' : (item.subscription && item.subscription !== 'free' ? 'business' : 'free');
+                  return (
+                    <div key={item.id} className={`list-card-item tier-${tier}`} onClick={() => navigate(`/profile/${item.id}`, { state: { profile: item } })}>
+                      <div className="card-main-body">
+                        {/* ... Internal card content remains the same ... */}
+                        <div className="card-left-content">
+                          <div className="card-header-row">
+                            <h3 className="card-title">
+                              {item.business_name || item.person_name}
+                              {item.mobile_number && <MdVerified className="verified-check" />}
+                              <div className="title-engagement-icons">
+                                <button className="action-icon favorite" onClick={(e) => toggleFavorite(e, item)}>
+                                  {isFavorite ? <FaHeart color="#e11d48" /> : <FaRegHeart />}
+                                </button>
+                                <button className="action-icon share" onClick={(e) => handleShare(e, item)}>
+                                  <MdShare />
+                                </button>
+                              </div>
+                            </h3>
+                          </div>
+                          {!keywordsFocused ? (
+                            <div className="card-info-row fade-in"><span className="info-item"><MdLocationOn /> {item.city}, {item.pincode}</span></div>
+                          ) : (
+                            <div className="card-keywords-row fade-in">
+                              {parseKeywords(item.keywords).slice(0, 5).map((k, idx) => (<span key={idx} className="keyword-chip">{k}</span>))}
+                            </div>
+                          )}
+                          <div className="card-phone-display"><span className="masked-phone">{maskMobile(item.mobile_number)}</span></div>
+                        </div>
+                        <div className="card-right-actions">
+                          <div className="tier-badge-container"><span className={`tier-tag ${tier}`}>{tier.toUpperCase()}</span></div>
+                          <div className="horizontal-action-btns">
+                            <button className="call-now-btn" onClick={(e) => { e.stopPropagation(); window.location.href = `tel:${item.mobile_number}`; }}><MdCall /> Call Now</button>
+                            <button className="enquire-now-btn" onClick={(e) => { e.stopPropagation(); setSelectedProfile(item); setShowEnquiryModal(true); }}>Enquire Now</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+
+              {/* NEW: Relevant Searches Section */}
+              {(filters.businessName || filters.keywords) && (
+                <div className="relevant-searches-section">
+                  <div className="relevant-header">
+                    <FaLightbulb color="#f59e0b" />
+                    <span>Are you looking for these also?</span>
+                  </div>
+                  <div className="relevant-tags-grid">
+                    {relevantSuggestions.map((tag, idx) => (
+                      <div key={idx} className="relevant-tag-card" onClick={() => setFilters({ ...filters, keywords: tag })}>
+                        <MdSearch /> {tag}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* RESTORED: Pagination Section */}
+              {totalPages > 1 && (
+                <div className="pagination-wrapper">
+                  <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="pg-btn"><MdChevronLeft /></button>
+                  <span className="pg-info">Page {currentPage} of {totalPages}</span>
+                  <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="pg-btn"><MdChevronRight /></button>
+                </div>
+              )}
 
 
 
+            </>
+          )}
+        </div>
 
+        {/* Sidebar remains the same */}
+        <aside className="directory-sidebar">
+          <div className="sidebar-sticky-container">
+            <div className="sidebar-box popular-keywords">
+              <h4><FaFire color="#f97316" /> Popular Categories</h4>
+              <div className="keywords-grid">
+                {popularKeywords.map((k, idx) => (
+                  <button key={idx} className="popular-chip" onClick={() => setFilters({ ...filters, keywords: k })}>{k}</button>
+                ))}
+              </div>
+            </div>
+            <div className="sidebar-box promo-box">
+              <div className="promo-icon"><MdAddBusiness /></div>
+              <h4>Grow Your Network</h4>
+              <p>Reach more buyers and sellers. List your business today and get verified.</p>
+              <button
+                className="list-business-btn"
+                onClick={() => navigate('/MediaPartner')} // Updated path
+              >
+                List Your Business
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
 
+      <RecentlyListEnquiryModal show={showEnquiryModal} onClose={() => setShowEnquiryModal(false)} selectedBusiness={selectedProfile} />
+      <FavoriteModal show={showFavoriteModal} onClose={() => { setShowFavoriteModal(false); setSelectedFavoriteItem(null); }} selectedItem={selectedFavoriteItem} />
+    </div>
+  );
+};
 
-
-
+export default DesptopSearchPage;

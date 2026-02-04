@@ -25,25 +25,25 @@ const SkeletonCard = ({ priority }) => (
 /* ─────────────────────────────
    Card Component
 ───────────────────────────── */
-const Card = ({
-  id,
-  displayName,
-  location,
-  bannerImg,
-  keywords,
-  subscription,
-  is_prime,
-}) => {
+const Card = ({ profileData }) => {
   const navigate = useNavigate();
+  
+  // Destructure for the preview
+  const { displayName, location, bannerImg, keywords, subscription, is_prime } = profileData;
+
+  const handleClick = () => {
+    // Pass the full profile object via state to ProfileDetailPage
+    navigate(`/profile/${profileData.id}`, { state: { profile: profileData } });
+  };
 
   return (
     <div
       className="featured-card fade-in"
-      onClick={() => navigate(`/profile/${id}`)}
+      onClick={handleClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") navigate(`/profile/${id}`);
+        if (e.key === "Enter" || e.key === " ") handleClick();
       }}
     >
       <div className="featured-banner">
@@ -58,7 +58,7 @@ const Card = ({
       <div className="featured-profile">
         <h4>
           {displayName}
-          {(subscription !== "free" || is_prime) && (
+          {(subscription?.toLowerCase() !== "free" || is_prime) && (
             <MdVerified className="verifiedicon" title="Premium / Verified" />
           )}
         </h4>
@@ -82,7 +82,7 @@ const Card = ({
 };
 
 /* ─────────────────────────────
-   Panelwithprofile
+   Panelwithprofile Component
 ───────────────────────────── */
 const Panelwithprofile = () => {
   const [cards, setCards] = useState([]);
@@ -96,20 +96,15 @@ const Panelwithprofile = () => {
     const fetchFeatured = async () => {
       setLoading(true);
 
+      // We fetch EVERYTHING needed by ProfileDetailPage (*) 
+      // to avoid blank screens after navigation
       const { data, error } = await supabase
         .from("users_table")
         .select(`
-          id,
           cover_photo,
           user_name,
           profiles:profiles!users_table_user_id_fkey (
-            id,
-            business_name,
-            person_name,
-            city,
-            keywords,
-            subscription,
-            is_prime
+            *
           )
         `)
         .not("cover_photo", "is", null)
@@ -125,23 +120,16 @@ const Panelwithprofile = () => {
             .filter((item) => item.profiles?.id)
             .map((item) => {
               const p = item.profiles;
+              // Construct a complete profile object compatible with ProfileDetailPage
               return {
-                id: p.id,
-                displayName:
-                  p.business_name ||
-                  p.person_name ||
-                  item.user_name ||
-                  "Business",
+                ...p, // Spread all profile fields (mobile, address, description, etc.)
+                displayName: p.business_name || p.person_name || item.user_name || "Business",
                 location: p.city,
                 bannerImg: item.cover_photo,
-                keywords: p.keywords,
-                subscription: p.subscription,
-                is_prime: p.is_prime,
               };
             })
         );
       }
-
       setTimeout(() => setLoading(false), 800);
     };
 
@@ -159,7 +147,9 @@ const Panelwithprofile = () => {
           ? Array.from({ length: INITIAL_COUNT }).map((_, i) => (
               <SkeletonCard key={i} priority={i < 2} />
             ))
-          : visibleCards.map((card) => <Card key={card.id} {...card} />)}
+          : visibleCards.map((card) => (
+              <Card key={card.id} profileData={card} />
+            ))}
       </div>
 
       {!loading && cards.length > INITIAL_COUNT && (
