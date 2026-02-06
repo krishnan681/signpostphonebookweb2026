@@ -928,21 +928,22 @@ const DIRECTORY_CATEGORIES_B2C = [
   { title: "Hotels", icon: <Hotel />, keywords: "hotel" },
   { title: "Colleges", icon: <GraduationCap />, keywords: "college" },
   { title: "Doctors", icon: <Stethoscope />, keywords: "doctor" },
-  { title: "Shops / Parlour", icon: <ShoppingBag />, keywords: "shop,parlour" },
+  { title: "Parlour", icon: <ShoppingBag />, keywords: "parlour" },
   { title: "Real Estate", icon: <Building2 />, keywords: "real estate" },
   { title: "Consultants", icon: <Briefcase />, keywords: "consultant" },
-  { title: "Repair Services", icon: <Wrench />, keywords: "repair,service" },
+  { title: "Repair Services", icon: <Wrench />, keywords: "service" },
 ];
 
 const DIRECTORY_CATEGORIES_B2B = [
   { title: "Chemical", icon: <FlaskConical />, keywords: "chemical" },
   { title: "Electrical", icon: <Zap />, keywords: "electrical" },
-  { title: "Steel / Builder", icon: <Factory />, keywords: "steel,builder" },
-  { title: "CNC / Hydraulic", icon: <Cpu />, keywords: "cnc,hydraulic" },
+  { title: "Steel", icon: <Factory />, keywords: "steel" },
+  { title: "CNC", icon: <Cpu />, keywords: "cnc" },
+  { title: "Hydraulic", icon: <Cpu />, keywords: "hydraulic" },
   { title: "Electronics", icon: <Plug />, keywords: "electronics" },
   { title: "Exporters", icon: <Plane />, keywords: "export" },
-  { title: "Logistics", icon: <Truck />, keywords: "logistics,transport" },
-  { title: "Local Services", icon: <Boxes />, keywords: "local services" },
+  { title: "Logistics", icon: <Truck />, keywords: "logistics" },
+  
 ];
 
 const DesktopViewHome = () => {

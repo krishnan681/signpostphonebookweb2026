@@ -1,4 +1,5 @@
  
+
 ├── 📁 public/
 │   └── 🖼️ vite.svg
 ├── 📁 src/
@@ -53,7 +54,9 @@
 │   │   │   │   └── 🎨 panelwithprofile.css
 │   │   │   ├── 📁 components/
 │   │   │   │   ├── 📁 css/
+│   │   │   │   │   ├── 🎨 MediaPatner.css
 │   │   │   │   │   └── 🎨 RecentlyListEnquiryModal.css
+│   │   │   │   ├── 📄 MediaPartner.jsx
 │   │   │   │   └── 📄 RecentlyListEnquiryModal.jsx
 │   │   │   ├── 📄 CategoryForLandingPage.jsx
 │   │   │   ├── 📄 DesktopNavbar.jsx
@@ -106,3 +109,4 @@
 ├── ⚙️ package.json
 └── 📄 vite.config.js
 
+ 
