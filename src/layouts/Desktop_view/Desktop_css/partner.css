@@ -1,0 +1,292 @@
+
+.border-success {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.border-danger {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+.signup-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.signup-container {
+  min-height: 0vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f4;
+  padding: 2rem;
+}
+
+.form-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+}
+
+.WholeSection{
+  height: 101vh;
+
+  @media (max-width: 768px) {
+  
+    height: 120vh;
+}
+}
+
+
+
+
+
+/* =========================================================
+   GLOBAL RESET (SAFE)
+   ========================================================= */
+
+.signup-container,
+.WholeSection {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f4f7fb, #eef2f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* =========================================================
+   ACCOUNT TYPE SELECTION SCREEN
+   ========================================================= */
+
+.cardd {
+  max-width: 900px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+  animation: fadeUp 0.6s ease;
+}
+
+.cardd h2 {
+  color: #111827;
+}
+
+.cardd p {
+  color: #6b7280;
+}
+
+/* Selection Cards */
+.cardd .border.rounded {
+  border-radius: 18px !important;
+  border: 1px solid #e5e7eb;
+  transition: all 0.35s ease;
+  background: #ffffff;
+}
+
+.cardd .border.rounded:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+  border-color: #2563eb;
+}
+
+.cardd svg {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+}
+
+.cardd button {
+  margin-top: 12px;
+  border-radius: 999px;
+  padding: 10px 26px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FORM CARD (PERSON / BUSINESS)
+   ========================================================= */
+
+.form-card {
+  width: 100%;
+  max-width: 1100px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px 40px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+  animation: fadeUp 0.6s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+.form-card label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.form-card .form-control {
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+
+.form-card .form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+/* Radio buttons */
+.form-check-input {
+  width: 1.15rem;
+  height: 1.15rem;
+  cursor: pointer;
+}
+
+.form-check-label {
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* =========================================================
+   VALIDATION TEXT
+   ========================================================= */
+
+.text-danger {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.form-card .btn-success {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 48px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.form-card .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px rgba(22, 163, 74, 0.35);
+}
+
+.form-card .btn-success:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BUSINESS VS PERSON VISUAL HINT (AUTO)
+   ========================================================= */
+
+.form-card:has(input[name="business_name"]) {
+  border-top: 6px solid #2563eb;
+}
+
+.form-card:has(input[name="person_name"]) {
+  border-top: 6px solid #db2777;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .form-card {
+    padding: 26px 22px;
+  }
+
+  .cardd {
+    padding: 24px 18px;
+  }
+
+  .form-card .btn-success {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

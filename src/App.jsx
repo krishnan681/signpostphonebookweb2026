@@ -27,6 +27,8 @@ import DesktopViewHome from "./layouts/Desktop_view/Desktop_View_Home";
 import DesktopSearchPage from "./layouts/Desktop_view/DesptopSearchPage"; // keep original file name
 import ProfileDetailPage from './layouts/Desktop_view/ProfileDetailPage';
 import MediaPartner from './layouts/Desktop_view/components/MediaPartner';
+import Partner from "./layouts/Desktop_view/partner";
+
 
 function App() {
   const { width } = useWindowSize();
@@ -49,6 +51,7 @@ function App() {
           <Route path="/directory" element={<DesktopSearchPage />} />
           <Route path="/profile/:id" element={<ProfileDetailPage />} />
           <Route path="/MediaPartner" element={<MediaPartner />} />
+           <Route path="/partner" element={<Partner />} />
         </>
       )}
 
@@ -59,6 +62,7 @@ function App() {
           <Route path="/modal" element={<ModelPage />} />
           <Route path="/settingspage" element={<SettingsPage />} />
           <Route path="/signinpage" element={<SigninPage />} />
+          {/* <Route path="/Partner" element={<Partner />} /> */}
         </>
       )}
 

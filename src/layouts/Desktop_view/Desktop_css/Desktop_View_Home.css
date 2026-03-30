@@ -120,7 +120,7 @@
 }
 
 .hero-left {
-  height: 380px;
+  /* height: 380px; */
   border-radius: 20px;
   overflow: hidden;
   background: #f3f4f6;
@@ -130,7 +130,7 @@
 .hero-left img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .hero-right {
@@ -597,4 +597,296 @@
   .popular-heading-card h2 {
     font-size: 2rem;
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.carousel-ad-slide {
+  position: relative;
+  height: 100%;
+  outline: none;
+}
+
+.carousel-ad-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: 50px;
+
+}
+
+/* Makes the whole slide clickable when there's a redirect URL */
+.carousel-ad-slide[style*="cursor: pointer"] {
+  cursor: pointer;
+}
+
+/* Optional fallback / placeholder styling */
+.no-banner-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f0f4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Image Modal / Lightbox */
+.ad-image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  cursor: default;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  font-size: 34px;
+  font-weight: bold;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.modal-image {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* Optional: slight zoom effect on hover */
+.modal-image:hover {
+  transform: scale(1.015);
+  transition: transform 0.3s ease;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.ad-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.ad-modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 1100px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.75);
+  cursor: default;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  font-size: 38px;
+  font-weight: bold;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.modal-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-target-image {
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.modal-link-fallback {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.redirect-url-text {
+  word-break: break-all;
+  background: #f8f9fa;
+  padding: 18px;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-family: monospace;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+.open-link-btn {
+  background: #0066ff;
+  color: white;
+  border: none;
+  padding: 14px 36px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.25s;
+}
+
+.open-link-btn:hover {
+  background: #0055dd;
+  transform: translateY(-2px);
+}
+
+.no-redirect {
+  padding: 60px 30px;
+  font-size: 1.3rem;
+  color: #666;
+  text-align: center;
 }

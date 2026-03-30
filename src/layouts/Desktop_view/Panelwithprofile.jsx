@@ -28,11 +28,11 @@ const SkeletonCard = ({ priority }) => (
 const Card = ({ profileData }) => {
   const navigate = useNavigate();
   
-  // Destructure for the preview
+ 
   const { displayName, location, bannerImg, keywords, subscription, is_prime } = profileData;
 
   const handleClick = () => {
-    // Pass the full profile object via state to ProfileDetailPage
+  
     navigate(`/profile/${profileData.id}`, { state: { profile: profileData } });
   };
 
@@ -81,9 +81,7 @@ const Card = ({ profileData }) => {
   );
 };
 
-/* ─────────────────────────────
-   Panelwithprofile Component
-───────────────────────────── */
+ 
 const Panelwithprofile = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,8 +94,7 @@ const Panelwithprofile = () => {
     const fetchFeatured = async () => {
       setLoading(true);
 
-      // We fetch EVERYTHING needed by ProfileDetailPage (*) 
-      // to avoid blank screens after navigation
+       
       const { data, error } = await supabase
         .from("users_table")
         .select(`
